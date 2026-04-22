@@ -1,0 +1,27 @@
+{
+  "summary": "Validated SEO polish, analytics tracking endpoint, and admin stats dashboard end-to-end. Backend: 13/13 new pytest pass (29/29 with prior regression suite) covering SEO statics (title/og/twitter/jsonld in /, og-image.png 200 image/png, sitemap.xml valid XML, robots.txt with Disallow:/admin), POST /api/track (with payload, empty body, no body), GET /api/admin/stats auth (401 no-token, 401 wrong-token, 200 valid-token with full key shape and daily.length==days), aggregation correctness (seeded 5 views with mixed referrers + 2 leads → totals.views and totals.leads incremented, referrers correctly bucketed LinkedIn/Google/Direct/example.com), and contact regression. Frontend: visiting / fires POST /api/track exactly once per session (verified via request interception — reload did NOT double-fire thanks to sessionStorage 'mo_tracked_session'), /admin gate renders, wrong password shows 'Wrong password' toast, correct password unlocks Dashboard with all 4 stat cards (stat-views=19, stat-uniques=3, stat-leads=22, stat-conv=115.79%), AreaChart (admin-daily-chart) and 4 breakdown cards (admin-referrers, admin-devices, admin-projects, admin-budgets) render, range toggle admin-range-7 swaps to 7-day window (sub-label '7 day window' confirmed), leads inbox filter tabs (all/form/booking) + search input still present.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {"ui_bugs": [], "integration_issues": [], "design_issues": []},
+  "test_report_links": [
+    "/app/backend/tests/test_analytics_seo.py",
+    "/app/backend/tests/test_mo_studio_api.py",
+    "/app/test_reports/pytest/pytest_results.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "server.py line 334: uses __import__('datetime').timedelta(...) inline — works but ugly; just `from datetime import timedelta` at top is cleaner. Cosmetic.",
+    "server.py /api/track: the response always returns 200 even on DB failure (returns {ok:false}). Reasonable for telemetry (don't break the page) but means client can't distinguish success from silent failure. Consider returning 202 on success and only swallow exceptions internally — minor.",
+    "server.py /api/admin/stats: in-memory aggregation over up to 20,000 page_view docs is fine today but won't scale; future improvement is to use a Mongo aggregation pipeline ($group by date) instead of pulling all docs into Python.",
+    "_hash_ip salts with ADMIN_TOKEN — double-purpose secret. Acceptable for now, but if ADMIN_TOKEN rotates, all historical daily-unique counts re-bucket. Consider a separate ANALYTICS_SALT env var.",
+    "Stats endpoint conversion_pct can exceed 100% when leads pre-date the views window — current behavior is documented (matches spec note) but the dashboard label 'leads / views' makes that visible to the operator (115.79% in screenshot). Optional UI clamp or denominator note would be friendlier.",
+    "Frontend useTrackPageView correctly de-dupes per session via sessionStorage('mo_tracked_session') — verified 1 fire per session in test."
+  ],
+  "updated_files": ["/app/backend/tests/test_analytics_seo.py"],
+  "success_rate": {"backend": "100% (29/29 across analytics+SEO+regression)", "frontend": "100% (tracking + dashboard + all data-testids present + range toggle + filter tabs)"},
+  "test_credentials": "ADMIN_TOKEN y2T6AaC52m3VacfPtff2j7C_BfAbF_YK (from /app/memory/test_credentials.md)",
+  "seed_data_creation": "Pytest creates ~5 page_views with TEST_seed session_ids and 3 contact_submissions prefixed TEST_StatSeed{0,1} + TEST_RegressionUser. Visiting / in browser added 1 more page_view to the daily window.",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "All analytics + SEO + dashboard flows verified. Admin token in /app/memory/test_credentials.md. Test files: /app/backend/tests/test_analytics_seo.py (new) + /app/backend/tests/test_mo_studio_api.py (existing). Run `pytest /app/backend/tests/ -v` for full backend regression. Dashboard data-testids: stat-views, stat-uniques, stat-leads, stat-conv, admin-daily-chart, admin-referrers, admin-devices, admin-projects, admin-budgets, admin-range-{7|30|90}, admin-refresh, admin-logout. Note: stats conversion_pct >100% in test DB is data-dependent (pre-seeded leads w/o tracked views), not a bug.",
+  "rca of the issue": "N/A — no defects found."
+}

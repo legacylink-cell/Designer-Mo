@@ -33,6 +33,32 @@ const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
 const CAL_LINK = "m-z-nrbvmu"; // cal.com/m-z-nrbvmu
 
+/* ---------- Analytics tracking ---------- */
+const useTrackPageView = () => {
+  useEffect(() => {
+    // Fire once per session to avoid double-counting on SPA navigations / HMR
+    const KEY = "mo_tracked_session";
+    if (typeof window === "undefined") return;
+    if (sessionStorage.getItem(KEY)) return;
+    sessionStorage.setItem(KEY, "1");
+
+    let sid = localStorage.getItem("mo_sid");
+    if (!sid) {
+      sid = (crypto.randomUUID && crypto.randomUUID()) || String(Date.now());
+      localStorage.setItem("mo_sid", sid);
+    }
+
+    axios
+      .post(`${API}/track`, {
+        path: window.location.pathname || "/",
+        referrer: document.referrer || "",
+        screen: `${window.screen.width}x${window.screen.height}`,
+        session_id: sid,
+      })
+      .catch(() => {});
+  }, []);
+};
+
 /* ---------- Shared helpers ---------- */
 const useReveal = () => {
   useEffect(() => {
@@ -1214,6 +1240,7 @@ const Footer = () => (
 const Landing = () => {
   useReveal();
   useCalcom();
+  useTrackPageView();
   return (
     <div className="grain relative">
       <Header />

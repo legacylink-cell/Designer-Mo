@@ -2,23 +2,89 @@
 <html lang="en">
     <head>
         <meta charset="utf-8" />
-        <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23121212'/%3E%3Ctext x='50' y='70' font-family='Georgia,serif' font-size='70' font-weight='500' text-anchor='middle' fill='%23F3F2ED'%3EMo.%3C/text%3E%3C/svg%3E" />
         <meta name="viewport" content="width=device-width,initial-scale=1" />
         <meta name="theme-color" content="#F3F2ED" />
+
+        <!-- Primary SEO -->
+        <title>Mo. — Freelance Web Designer &amp; Developer | Mohamed Abou Zeid</title>
         <meta
             name="description"
-            content="Mo — Freelance web designer & developer. Bold, editorial digital experiences. Design, development, SEO, and maintenance."
+            content="Mo (Mohamed Abou Zeid) — freelance web designer &amp; developer crafting bold, editorial digital experiences. Full-service design, development, SEO, and maintenance. Book a free 20-minute intro call."
         />
-        <title>Mo. — Web Designer &amp; Developer</title>
+        <meta name="author" content="Mohamed Abou Zeid" />
+        <meta name="keywords" content="freelance web designer, web developer, editorial web design, SEO, Mohamed Abou Zeid, Mo, bespoke website, portfolio" />
+        <link rel="canonical" href="https://mohamedabouzeid.com/" />
+
+        <!-- Favicon -->
+        <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23121212'/%3E%3Ctext x='50' y='70' font-family='Georgia,serif' font-size='70' font-weight='500' text-anchor='middle' fill='%23F3F2ED'%3EMo.%3C/text%3E%3C/svg%3E" />
+        <link rel="apple-touch-icon" href="%PUBLIC_URL%/og-image.png" />
+
+        <!-- Open Graph / Facebook / LinkedIn / iMessage -->
+        <meta property="og:type" content="website" />
+        <meta property="og:site_name" content="Mo. — Web Design Studio" />
+        <meta property="og:url" content="https://mohamedabouzeid.com/" />
+        <meta property="og:title" content="Mo. — Freelance Web Designer &amp; Developer" />
+        <meta property="og:description" content="Bold, editorial digital experiences. Design, development, SEO, and maintenance — delivered by Mohamed Abou Zeid." />
+        <meta property="og:image" content="https://mohamedabouzeid.com/og-image.png" />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta property="og:image:alt" content="Mo. — I design websites." />
+        <meta property="og:locale" content="en_US" />
+
+        <!-- Twitter / X -->
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="Mo. — Freelance Web Designer &amp; Developer" />
+        <meta name="twitter:description" content="Bold, editorial digital experiences. Design, development, SEO, and maintenance." />
+        <meta name="twitter:image" content="https://mohamedabouzeid.com/og-image.png" />
+        <meta name="twitter:image:alt" content="Mo. — I design websites." />
+
+        <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
         <link
             href="https://fonts.googleapis.com/css2?family=Gloock&family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
             rel="stylesheet"
         />
+
+        <!-- JSON-LD: Person + ProfessionalService -->
+        <script type="application/ld+json">
+        {
+            "@context": "https://schema.org",
+            "@graph": [
+                {
+                    "@type": "Person",
+                    "@id": "https://mohamedabouzeid.com/#person",
+                    "name": "Mohamed Abou Zeid",
+                    "alternateName": "Mo",
+                    "url": "https://mohamedabouzeid.com/",
+                    "jobTitle": "Freelance Web Designer & Developer",
+                    "sameAs": [
+                        "https://www.linkedin.com/in/mohamed-abou-zeid-681a6732/"
+                    ]
+                },
+                {
+                    "@type": "ProfessionalService",
+                    "@id": "https://mohamedabouzeid.com/#studio",
+                    "name": "Mo. — Web Design Studio",
+                    "url": "https://mohamedabouzeid.com/",
+                    "image": "https://mohamedabouzeid.com/og-image.png",
+                    "founder": { "@id": "https://mohamedabouzeid.com/#person" },
+                    "description": "Freelance web design, development, SEO, and maintenance.",
+                    "priceRange": "$$-$$$",
+                    "areaServed": "Worldwide",
+                    "serviceType": ["Web Design", "Web Development", "SEO", "Website Maintenance"],
+                    "offers": [
+                        { "@type": "Offer", "name": "Starter",      "price": "1200", "priceCurrency": "USD" },
+                        { "@type": "Offer", "name": "Professional", "price": "2800", "priceCurrency": "USD" },
+                        { "@type": "Offer", "name": "Premium",      "price": "5500", "priceCurrency": "USD" }
+                    ]
+                }
+            ]
+        }
+        </script>
     </head>
     <body>
-        <noscript>You need to enable JavaScript to run this app.</noscript>
+        <noscript>You need to enable JavaScript to view this portfolio.</noscript>
         <div id="root"></div>
     </body>
 </html>

@@ -235,6 +235,179 @@ async def delete_contact(submission_id: str, _: bool = Depends(require_admin)):
     return {"ok": True, "deleted": submission_id}
 
 
+# ---------- Analytics ----------
+class PageViewCreate(BaseModel):
+    path: str = Field(default="/", max_length=200)
+    referrer: Optional[str] = Field(default=None, max_length=500)
+    screen: Optional[str] = Field(default=None, max_length=40)
+    session_id: Optional[str] = Field(default=None, max_length=80)
+
+
+def _hash_ip(ip: str) -> str:
+    import hashlib
+    # Rotate the hash daily so we count daily-uniques without storing raw IPs.
+    today = datetime.now(timezone.utc).strftime('%Y-%m-%d')
+    return hashlib.sha256(f"{ip}|{today}|{ADMIN_TOKEN}".encode()).hexdigest()[:16]
+
+
+@api_router.post("/track")
+async def track_view(
+    event: PageViewCreate,
+    x_forwarded_for: str = Header(default=""),
+    user_agent: str = Header(default=""),
+):
+    try:
+        ip = (x_forwarded_for.split(",")[0].strip() if x_forwarded_for else "") or "unknown"
+        doc = {
+            "id": str(uuid.uuid4()),
+            "path": event.path or "/",
+            "referrer": (event.referrer or "")[:500],
+            "ua": (user_agent or "")[:500],
+            "screen": event.screen,
+            "session_id": event.session_id,
+            "ip_hash": _hash_ip(ip),
+            "created_at": datetime.now(timezone.utc).isoformat(),
+        }
+        await db.page_views.insert_one(doc)
+        return {"ok": True}
+    except Exception as e:
+        logger.warning(f"track failed: {e}")
+        return {"ok": False}
+
+
+def _bucket_referrer(ref: str) -> str:
+    if not ref:
+        return "Direct"
+    try:
+        from urllib.parse import urlparse
+        host = (urlparse(ref).netloc or ref).lower().replace("www.", "")
+        if not host:
+            return "Direct"
+        mapping = {
+            "google.com": "Google",
+            "google.co": "Google",
+            "bing.com": "Bing",
+            "duckduckgo.com": "DuckDuckGo",
+            "linkedin.com": "LinkedIn",
+            "lnkd.in": "LinkedIn",
+            "twitter.com": "Twitter / X",
+            "x.com": "Twitter / X",
+            "t.co": "Twitter / X",
+            "facebook.com": "Facebook",
+            "instagram.com": "Instagram",
+            "cal.com": "Cal.com",
+            "reddit.com": "Reddit",
+        }
+        for k, v in mapping.items():
+            if k in host:
+                return v
+        return host.split(":")[0]
+    except Exception:
+        return "Other"
+
+
+def _parse_ua(ua: str) -> dict:
+    u = (ua or "").lower()
+    if "mobile" in u or "iphone" in u or "android" in u:
+        device = "Mobile"
+    elif "ipad" in u or "tablet" in u:
+        device = "Tablet"
+    else:
+        device = "Desktop"
+    if "firefox" in u:
+        browser = "Firefox"
+    elif "edg/" in u or "edge" in u:
+        browser = "Edge"
+    elif "chrome" in u and "safari" in u:
+        browser = "Chrome"
+    elif "safari" in u:
+        browser = "Safari"
+    else:
+        browser = "Other"
+    return {"device": device, "browser": browser}
+
+
+@api_router.get("/admin/stats")
+async def admin_stats(days: int = 30, _: bool = Depends(require_admin)):
+    days = max(1, min(days, 365))
+    now = datetime.now(timezone.utc)
+    start = now.replace(hour=0, minute=0, second=0, microsecond=0) - __import__("datetime").timedelta(days=days - 1)
+    start_iso = start.isoformat()
+
+    # Fetch only the fields we need, sorted by date
+    views = await db.page_views.find(
+        {"created_at": {"$gte": start_iso}},
+        {"_id": 0, "created_at": 1, "referrer": 1, "ua": 1, "ip_hash": 1, "path": 1},
+    ).to_list(20000)
+    subs = await db.contact_submissions.find(
+        {"created_at": {"$gte": start_iso}},
+        {"_id": 0, "created_at": 1, "project_type": 1, "budget": 1, "message": 1, "email": 1},
+    ).to_list(2000)
+
+    # Build daily buckets
+    from collections import Counter, defaultdict
+
+    daily = defaultdict(lambda: {"views": 0, "uniques": set(), "leads": 0})
+    for d in range(days):
+        key = (start + __import__("datetime").timedelta(days=d)).strftime("%Y-%m-%d")
+        daily[key]  # touch to ensure key exists
+
+    for v in views:
+        try:
+            key = datetime.fromisoformat(v["created_at"]).strftime("%Y-%m-%d")
+        except Exception:
+            continue
+        bucket = daily[key]
+        bucket["views"] += 1
+        bucket["uniques"].add(v.get("ip_hash") or v.get("created_at"))
+
+    for s in subs:
+        try:
+            key = datetime.fromisoformat(s["created_at"]).strftime("%Y-%m-%d")
+        except Exception:
+            continue
+        daily[key]["leads"] += 1
+
+    daily_series = [
+        {"date": k, "views": v["views"], "uniques": len(v["uniques"]), "leads": v["leads"]}
+        for k, v in sorted(daily.items())
+    ]
+
+    # Aggregates
+    total_views = sum(r["views"] for r in daily_series)
+    total_uniques = len({v.get("ip_hash") for v in views if v.get("ip_hash")})
+    total_leads = len(subs)
+    conversion = (total_leads / total_views * 100.0) if total_views else 0.0
+
+    referrers = Counter(_bucket_referrer(v.get("referrer") or "") for v in views).most_common(8)
+    ua_info = [_parse_ua(v.get("ua") or "") for v in views]
+    devices = Counter(x["device"] for x in ua_info).most_common()
+    browsers = Counter(x["browser"] for x in ua_info).most_common(6)
+
+    projects = Counter((s.get("project_type") or "Unknown") for s in subs).most_common(8)
+    budgets = Counter((s.get("budget") or "Unknown") for s in subs).most_common(8)
+    booking_leads = sum(1 for s in subs if (s.get("message") or "").startswith("[Booking pre-qualify]"))
+    form_leads = total_leads - booking_leads
+
+    return {
+        "range_days": days,
+        "totals": {
+            "views": total_views,
+            "uniques": total_uniques,
+            "leads": total_leads,
+            "form_leads": form_leads,
+            "booking_leads": booking_leads,
+            "conversion_pct": round(conversion, 2),
+        },
+        "daily": daily_series,
+        "referrers": [{"name": k, "value": v} for k, v in referrers],
+        "devices": [{"name": k, "value": v} for k, v in devices],
+        "browsers": [{"name": k, "value": v} for k, v in browsers],
+        "projects": [{"name": k, "value": v} for k, v in projects],
+        "budgets": [{"name": k, "value": v} for k, v in budgets],
+    }
+
+
 # Include the router in the main app
 app.include_router(api_router)
 
