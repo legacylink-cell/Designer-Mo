@@ -52,3 +52,8 @@
 
 ## Test credentials
 N/A — no auth in this app.
+
+## Update — Dec 2025 (Iteration 2)
+- Added Cal.com inline embed section ("Book a call") using username `m-z-nrbvmu`
+- Added popup-embed triggers on header "Book Call" and hero "Book a Call" buttons via official Cal embed snippet
+- Nav updated: Work / Services / Pricing / Book / About

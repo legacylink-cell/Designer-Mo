@@ -14,6 +14,7 @@ import {
   Code2,
   Search,
   Wrench,
+  CalendarDays,
 } from "lucide-react";
 
 import { Input } from "@/components/ui/input";
@@ -29,6 +30,7 @@ import {
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
+const CAL_LINK = "m-z-nrbvmu"; // cal.com/m-z-nrbvmu
 
 /* ---------- Shared helpers ---------- */
 const useReveal = () => {
@@ -47,6 +49,60 @@ const useReveal = () => {
     );
     els.forEach((el) => io.observe(el));
     return () => io.disconnect();
+  }, []);
+};
+
+/* ---------- Cal.com initializer ---------- */
+const useCalcom = () => {
+  useEffect(() => {
+    // Official Cal.com embed snippet (namespaced)
+    (function (C, A, L) {
+      let p = function (a, ar) {
+        a.q.push(ar);
+      };
+      let d = C.document;
+      C.Cal =
+        C.Cal ||
+        function () {
+          let cal = C.Cal;
+          let ar = arguments;
+          if (!cal.loaded) {
+            cal.ns = {};
+            cal.q = cal.q || [];
+            d.head.appendChild(d.createElement("script")).src = A;
+            cal.loaded = true;
+          }
+          if (ar[0] === L) {
+            const api = function () {
+              p(api, arguments);
+            };
+            const namespace = ar[1];
+            api.q = api.q || [];
+            if (typeof namespace === "string") {
+              cal.ns[namespace] = cal.ns[namespace] || api;
+              p(cal.ns[namespace], ar);
+              p(cal, ["initNamespace", namespace]);
+            } else p(cal, ar);
+            return;
+          }
+          p(cal, ar);
+        };
+    })(window, "https://app.cal.com/embed/embed.js", "init");
+
+    if (window.Cal) {
+      window.Cal("init", "intro", { origin: "https://cal.com" });
+      window.Cal.ns.intro("ui", {
+        theme: "light",
+        styles: { branding: { brandColor: "#E83B22" } },
+        hideEventTypeDetails: false,
+        layout: "month_view",
+      });
+      window.Cal.ns.intro("inline", {
+        elementOrSelector: "#cal-inline",
+        calLink: CAL_LINK,
+        config: { layout: "month_view", theme: "light" },
+      });
+    }
   }, []);
 };
 
@@ -83,11 +139,24 @@ const Header = () => {
           <a href="#pricing" data-testid="nav-pricing" className="link-underline">
             Pricing
           </a>
+          <a href="#book" data-testid="nav-book" className="link-underline">
+            Book
+          </a>
           <a href="#about" data-testid="nav-about" className="link-underline">
             About
           </a>
         </nav>
         <div className="flex items-center gap-3">
+          <button
+            type="button"
+            data-cal-namespace="intro"
+            data-cal-link={CAL_LINK}
+            data-cal-config='{"layout":"month_view","theme":"light"}'
+            data-testid="header-book-call"
+            className="btn-ghost hidden lg:inline-flex"
+          >
+            <CalendarDays size={14} /> Book Call
+          </button>
           <a
             href="#contact"
             data-testid="header-cta"
@@ -113,6 +182,7 @@ const Header = () => {
           <a href="#work" onClick={() => setOpen(false)}>Work</a>
           <a href="#services" onClick={() => setOpen(false)}>Services</a>
           <a href="#pricing" onClick={() => setOpen(false)}>Pricing</a>
+          <a href="#book" onClick={() => setOpen(false)}>Book</a>
           <a href="#about" onClick={() => setOpen(false)}>About</a>
           <a href="#contact" onClick={() => setOpen(false)}>Contact</a>
         </div>
@@ -189,10 +259,24 @@ const Hero = () => (
             <a href="#contact" data-testid="hero-cta-primary" className="btn-primary">
               Start a project <ArrowRight size={14} />
             </a>
-            <a href="#work" data-testid="hero-cta-secondary" className="btn-ghost">
-              See the work
-            </a>
+            <button
+              type="button"
+              data-cal-namespace="intro"
+              data-cal-link={CAL_LINK}
+              data-cal-config='{"layout":"month_view","theme":"light"}'
+              data-testid="hero-cta-book-call"
+              className="btn-ghost"
+            >
+              <CalendarDays size={14} /> Book a call
+            </button>
           </div>
+          <a
+            href="#work"
+            data-testid="hero-cta-secondary"
+            className="inline-block mt-4 overline link-underline"
+          >
+            Or see the work →
+          </a>
         </div>
         <div className="md:col-span-2 md:col-start-11 hidden md:flex justify-end">
           <div className="w-28 h-28 rounded-full border border-[#121212] flex items-center justify-center spin-slow">
@@ -645,6 +729,60 @@ const Testimonials = () => (
   </section>
 );
 
+/* ---------- Booking (Cal.com) ---------- */
+const Booking = () => (
+  <section
+    id="book"
+    className="py-24 md:py-32 border-t border-[#D5D3CB]"
+    data-testid="booking-section"
+  >
+    <div className="max-w-7xl mx-auto px-6 md:px-12">
+      <div className="grid grid-cols-1 md:grid-cols-12 gap-10 md:gap-16 items-start">
+        <div className="md:col-span-5 md:sticky md:top-24">
+          <div className="overline">Book / 06</div>
+          <h2 className="font-display text-5xl md:text-7xl leading-[0.95] tracking-tight mt-4">
+            Grab a 20-min<br />intro call<span className="text-[#E83B22]">.</span>
+          </h2>
+          <p className="mt-6 text-lg text-[#595959] max-w-md">
+            Faster than the form. Pick a slot below, tell me about the project,
+            and we'll see if we're a fit — no commitment.
+          </p>
+          <ul className="mt-8 space-y-3 text-sm">
+            {[
+              "20 minutes, on Zoom",
+              "Goals, timeline, budget",
+              "Honest recommendation — even if it's not me",
+            ].map((f) => (
+              <li key={f} className="flex items-start gap-3">
+                <Check size={18} className="text-[#E83B22]" strokeWidth={2.5} />
+                <span>{f}</span>
+              </li>
+            ))}
+          </ul>
+          <button
+            type="button"
+            data-cal-namespace="intro"
+            data-cal-link={CAL_LINK}
+            data-cal-config='{"layout":"month_view","theme":"light"}'
+            data-testid="booking-popup-cta"
+            className="btn-primary mt-10"
+          >
+            <CalendarDays size={14} /> Open in full screen
+          </button>
+        </div>
+
+        <div className="md:col-span-7 border border-[#121212] bg-[#F3F2ED] p-2">
+          <div
+            id="cal-inline"
+            data-testid="cal-inline-embed"
+            style={{ width: "100%", minHeight: "680px", overflow: "hidden" }}
+          />
+        </div>
+      </div>
+    </div>
+  </section>
+);
+
 /* ---------- Contact ---------- */
 const Contact = () => {
   const [form, setForm] = useState({
@@ -702,7 +840,7 @@ const Contact = () => {
     >
       <div className="max-w-7xl mx-auto px-6 md:px-12 grid grid-cols-1 md:grid-cols-12 gap-12">
         <div className="md:col-span-5">
-          <div className="overline !text-[#D5D3CB]">Contact / 06</div>
+          <div className="overline !text-[#D5D3CB]">Contact / 07</div>
           <h2 className="font-display text-6xl md:text-8xl leading-[0.9] tracking-tight mt-4">
             Let's build<br />it<span className="text-[#E83B22]">.</span>
           </h2>
@@ -895,6 +1033,7 @@ const Footer = () => (
 /* ---------- Landing ---------- */
 const Landing = () => {
   useReveal();
+  useCalcom();
   return (
     <div className="grain relative">
       <Header />
@@ -907,6 +1046,7 @@ const Landing = () => {
         <Pricing />
         <Portfolio />
         <Testimonials />
+        <Booking />
         <Contact />
       </main>
       <Footer />
