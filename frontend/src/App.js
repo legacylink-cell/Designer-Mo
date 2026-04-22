@@ -97,11 +97,6 @@ const useCalcom = () => {
         hideEventTypeDetails: false,
         layout: "month_view",
       });
-      window.Cal.ns.intro("inline", {
-        elementOrSelector: "#cal-inline",
-        calLink: CAL_LINK,
-        config: { layout: "month_view", theme: "light" },
-      });
     }
   }, []);
 };
@@ -729,59 +724,243 @@ const Testimonials = () => (
   </section>
 );
 
-/* ---------- Booking (Cal.com) ---------- */
-const Booking = () => (
-  <section
-    id="book"
-    className="py-24 md:py-32 border-t border-[#D5D3CB]"
-    data-testid="booking-section"
-  >
-    <div className="max-w-7xl mx-auto px-6 md:px-12">
-      <div className="grid grid-cols-1 md:grid-cols-12 gap-10 md:gap-16 items-start">
-        <div className="md:col-span-5 md:sticky md:top-24">
-          <div className="overline">Book / 06</div>
-          <h2 className="font-display text-5xl md:text-7xl leading-[0.95] tracking-tight mt-4">
-            Grab a 20-min<br />intro call<span className="text-[#E83B22]">.</span>
-          </h2>
-          <p className="mt-6 text-lg text-[#595959] max-w-md">
-            Faster than the form. Pick a slot below, tell me about the project,
-            and we'll see if we're a fit — no commitment.
-          </p>
-          <ul className="mt-8 space-y-3 text-sm">
-            {[
-              "20 minutes, on Zoom",
-              "Goals, timeline, budget",
-              "Honest recommendation — even if it's not me",
-            ].map((f) => (
-              <li key={f} className="flex items-start gap-3">
-                <Check size={18} className="text-[#E83B22]" strokeWidth={2.5} />
-                <span>{f}</span>
-              </li>
-            ))}
-          </ul>
-          <button
-            type="button"
-            data-cal-namespace="intro"
-            data-cal-link={CAL_LINK}
-            data-cal-config='{"layout":"month_view","theme":"light"}'
-            data-testid="booking-popup-cta"
-            className="btn-primary mt-10"
+/* ---------- Booking (Cal.com with pre-qualify) ---------- */
+const Booking = () => {
+  const [pre, setPre] = useState({
+    name: "",
+    email: "",
+    project_type: "",
+    budget: "",
+    notes: "",
+  });
+  const [saving, setSaving] = useState(false);
+
+  const openCalWithPrefill = async () => {
+    if (!pre.name || !pre.email || !pre.project_type || !pre.budget) {
+      toast.error("Please fill in name, email, project type, and budget.");
+      return;
+    }
+    try {
+      setSaving(true);
+      // Fire-and-save: capture the lead even if they don't complete booking
+      axios
+        .post(`${API}/contact`, {
+          name: pre.name,
+          email: pre.email,
+          project_type: pre.project_type,
+          budget: pre.budget,
+          message:
+            pre.notes ||
+            `[Booking pre-qualify] ${pre.project_type} · ${pre.budget}`,
+        })
+        .catch(() => {});
+
+      // Open Cal modal with prefill values
+      // Custom question slugs (project-type, budget) must be set up in Cal.com
+      if (window.Cal && window.Cal.ns && window.Cal.ns.intro) {
+        window.Cal.ns.intro("modal", {
+          calLink: CAL_LINK,
+          config: {
+            layout: "month_view",
+            theme: "light",
+            name: pre.name,
+            email: pre.email,
+            "project-type": pre.project_type,
+            budget: pre.budget,
+            notes: pre.notes,
+          },
+        });
+        toast.success("Calendar opening — pick a slot!");
+      } else {
+        // Fallback: open Cal.com in new tab with query params
+        const params = new URLSearchParams({
+          name: pre.name,
+          email: pre.email,
+          "project-type": pre.project_type,
+          budget: pre.budget,
+          notes: pre.notes,
+        });
+        window.open(`https://cal.com/${CAL_LINK}?${params.toString()}`, "_blank");
+      }
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  return (
+    <section
+      id="book"
+      className="py-24 md:py-32 border-t border-[#D5D3CB]"
+      data-testid="booking-section"
+    >
+      <div className="max-w-7xl mx-auto px-6 md:px-12">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-10 md:gap-16 items-start">
+          <div className="md:col-span-5">
+            <div className="overline">Book / 06</div>
+            <h2 className="font-display text-5xl md:text-7xl leading-[0.95] tracking-tight mt-4">
+              Grab a 20-min<br />intro call<span className="text-[#E83B22]">.</span>
+            </h2>
+            <p className="mt-6 text-lg text-[#595959] max-w-md">
+              Tell me a bit about the project first — I'll come to the call
+              prepared. Takes 30 seconds.
+            </p>
+            <ul className="mt-8 space-y-3 text-sm">
+              {[
+                "20 minutes, on Zoom",
+                "Goals, timeline, budget — no pitch",
+                "Honest recommendation, even if it's not me",
+              ].map((f) => (
+                <li key={f} className="flex items-start gap-3">
+                  <Check size={18} className="text-[#E83B22]" strokeWidth={2.5} />
+                  <span>{f}</span>
+                </li>
+              ))}
+            </ul>
+            <div className="mt-10 pt-6 border-t border-[#D5D3CB] text-xs font-mono text-[#595959] max-w-md">
+              Prefer to skip the form? →{" "}
+              <button
+                type="button"
+                data-cal-namespace="intro"
+                data-cal-link={CAL_LINK}
+                data-cal-config='{"layout":"month_view","theme":"light"}'
+                data-testid="booking-skip-cta"
+                className="underline hover:text-[#E83B22]"
+              >
+                open the calendar directly
+              </button>
+            </div>
+          </div>
+
+          <div
+            className="md:col-span-7 border border-[#121212] bg-[#F3F2ED] p-8 md:p-10"
+            data-testid="booking-prequalify-card"
           >
-            <CalendarDays size={14} /> Open in full screen
-          </button>
+            <div className="flex items-center justify-between mb-8">
+              <span className="overline">Pre-qualify · 2 min</span>
+              <span className="font-mono text-xs text-[#595959]">Step 1 / 2</span>
+            </div>
+
+            <form
+              noValidate
+              onSubmit={(e) => {
+                e.preventDefault();
+                openCalWithPrefill();
+              }}
+              className="field-line grid grid-cols-1 md:grid-cols-2 gap-6"
+              data-testid="booking-form"
+            >
+              <div>
+                <Label className="overline">Name *</Label>
+                <Input
+                  data-testid="booking-name"
+                  value={pre.name}
+                  onChange={(e) => setPre({ ...pre, name: e.target.value })}
+                  placeholder="Your full name"
+                />
+              </div>
+              <div>
+                <Label className="overline">Email *</Label>
+                <Input
+                  data-testid="booking-email"
+                  type="email"
+                  value={pre.email}
+                  onChange={(e) => setPre({ ...pre, email: e.target.value })}
+                  placeholder="you@company.com"
+                />
+              </div>
+
+              <div>
+                <Label className="overline">Project Type *</Label>
+                <Select
+                  value={pre.project_type}
+                  onValueChange={(v) => setPre({ ...pre, project_type: v })}
+                >
+                  <SelectTrigger
+                    data-testid="booking-project-type"
+                    data-field
+                    className="bg-transparent border-0 border-b-[1.5px] border-[#121212] rounded-none px-0 focus:ring-0"
+                  >
+                    <SelectValue placeholder="Select a service" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Design">Design</SelectItem>
+                    <SelectItem value="Development">Development</SelectItem>
+                    <SelectItem value="Design + Development">
+                      Design + Development
+                    </SelectItem>
+                    <SelectItem value="SEO">SEO</SelectItem>
+                    <SelectItem value="Maintenance">Maintenance</SelectItem>
+                    <SelectItem value="Full service">Full service</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div>
+                <Label className="overline">Budget *</Label>
+                <Select
+                  value={pre.budget}
+                  onValueChange={(v) => setPre({ ...pre, budget: v })}
+                >
+                  <SelectTrigger
+                    data-testid="booking-budget"
+                    data-field
+                    className="bg-transparent border-0 border-b-[1.5px] border-[#121212] rounded-none px-0 focus:ring-0"
+                  >
+                    <SelectValue placeholder="Select a range" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="< $1,500">Under $1,500</SelectItem>
+                    <SelectItem value="$1,500 – $3,000">
+                      $1,500 – $3,000
+                    </SelectItem>
+                    <SelectItem value="$3,000 – $6,000">
+                      $3,000 – $6,000
+                    </SelectItem>
+                    <SelectItem value="$6,000 – $12,000">
+                      $6,000 – $12,000
+                    </SelectItem>
+                    <SelectItem value="$12,000+">$12,000+</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="md:col-span-2">
+                <Label className="overline">Quick context (optional)</Label>
+                <Textarea
+                  data-testid="booking-notes"
+                  rows={3}
+                  value={pre.notes}
+                  onChange={(e) => setPre({ ...pre, notes: e.target.value })}
+                  placeholder="Timeline, current site, inspiration…"
+                />
+              </div>
+
+              <div className="md:col-span-2 flex items-center justify-between pt-4 border-t border-[#D5D3CB] gap-4 flex-wrap">
+                <p className="text-xs font-mono text-[#595959] max-w-sm">
+                  I'll see these answers before we meet, so we can skip the
+                  small talk and dive in.
+                </p>
+                <button
+                  type="submit"
+                  disabled={saving}
+                  data-testid="booking-submit"
+                  className="btn-primary"
+                >
+                  <CalendarDays size={14} />
+                  {saving ? "Opening…" : "Find a time →"}
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
 
-        <div className="md:col-span-7 border border-[#121212] bg-[#F3F2ED] p-2">
-          <div
-            id="cal-inline"
-            data-testid="cal-inline-embed"
-            style={{ width: "100%", minHeight: "680px", overflow: "hidden" }}
-          />
-        </div>
+        {/* Hidden inline embed kept only for the "open calendar directly" fallback flow.
+            We drive bookings through the prefilled modal so every lead is pre-qualified. */}
+        <div id="cal-inline" className="hidden" data-testid="cal-inline-embed-hidden" />
       </div>
-    </div>
-  </section>
-);
+    </section>
+  );
+};
 
 /* ---------- Contact ---------- */
 const Contact = () => {
