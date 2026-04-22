@@ -729,6 +729,7 @@ const Contact = () => {
 
         <form
           onSubmit={onSubmit}
+          noValidate
           className="md:col-span-7 grid grid-cols-1 md:grid-cols-2 gap-8 field-line"
           data-testid="contact-form"
         >
