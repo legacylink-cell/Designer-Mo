@@ -57,3 +57,12 @@ N/A — no auth in this app.
 - Added Cal.com inline embed section ("Book a call") using username `m-z-nrbvmu`
 - Added popup-embed triggers on header "Book Call" and hero "Book a Call" buttons via official Cal embed snippet
 - Nav updated: Work / Services / Pricing / Book / About
+
+## Update — Dec 2025 (Iteration 3) — Admin Dashboard
+- Added `/admin` route (password-gated) for reviewing leads
+- Auth: shared secret via `X-Admin-Token` header, constant-time compare (hmac.compare_digest)
+- ADMIN_TOKEN stored in /app/backend/.env (value in /app/memory/test_credentials.md)
+- Protected endpoints: GET /api/contact, POST /api/admin/verify, DELETE /api/contact/{id}
+- Public endpoints unchanged: POST /api/contact
+- Features: filter tabs (All/Form/Booking), full-text search, delete, auto-session via localStorage
+- Mobile-friendly, matches editorial aesthetic
