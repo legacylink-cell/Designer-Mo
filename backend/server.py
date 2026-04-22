@@ -1,8 +1,9 @@
-from fastapi import FastAPI, APIRouter, HTTPException
+from fastapi import FastAPI, APIRouter, HTTPException, Depends, Header
 from dotenv import load_dotenv
 from starlette.middleware.cors import CORSMiddleware
 from motor.motor_asyncio import AsyncIOMotorClient
 import os
+import hmac
 import logging
 from pathlib import Path
 from pydantic import BaseModel, Field, ConfigDict, EmailStr
@@ -18,6 +19,15 @@ load_dotenv(ROOT_DIR / '.env')
 mongo_url = os.environ['MONGO_URL']
 client = AsyncIOMotorClient(mongo_url)
 db = client[os.environ['DB_NAME']]
+
+ADMIN_TOKEN = os.environ.get('ADMIN_TOKEN', '')
+
+
+def require_admin(x_admin_token: str = Header(default="")):
+    """Constant-time compare of the shared admin secret."""
+    if not ADMIN_TOKEN or not hmac.compare_digest(x_admin_token or "", ADMIN_TOKEN):
+        raise HTTPException(status_code=401, detail="Unauthorized")
+    return True
 
 # Create the main app without a prefix
 app = FastAPI()
@@ -100,12 +110,26 @@ async def create_contact(submission: ContactSubmissionCreate):
 
 
 @api_router.get("/contact", response_model=List[ContactSubmission])
-async def list_contacts():
+async def list_contacts(_: bool = Depends(require_admin)):
     items = await db.contact_submissions.find({}, {"_id": 0}).sort("created_at", -1).to_list(500)
     for item in items:
         if isinstance(item.get('created_at'), str):
             item['created_at'] = datetime.fromisoformat(item['created_at'])
     return items
+
+
+@api_router.post("/admin/verify")
+async def admin_verify(_: bool = Depends(require_admin)):
+    """Ping endpoint used by the admin UI to validate the password."""
+    return {"ok": True}
+
+
+@api_router.delete("/contact/{submission_id}")
+async def delete_contact(submission_id: str, _: bool = Depends(require_admin)):
+    res = await db.contact_submissions.delete_one({"id": submission_id})
+    if res.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Submission not found")
+    return {"ok": True, "deleted": submission_id}
 
 
 # Include the router in the main app
