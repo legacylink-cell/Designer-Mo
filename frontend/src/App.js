@@ -523,6 +523,17 @@ const Services = () => {
 };
 
 /* ---------- Pricing ---------- */
+const addons = [
+  { name: "Extra page", price: "$350" },
+  { name: "Logo mark", price: "$450" },
+  { name: "Full brand identity", price: "$1,200" },
+  { name: "Copywriting (per ~400-word section)", price: "$180" },
+  { name: "SEO launch pack", price: "$900" },
+  { name: "E-commerce setup (Shopify / Stripe)", price: "$1,200" },
+  { name: "Monthly maintenance", price: "from $150 / mo" },
+  { name: "Rush delivery (under 2 weeks)", price: "+30%" },
+];
+
 const tiers = [
   {
     id: "starter",
@@ -733,6 +744,49 @@ const Pricing = () => (
       <p className="mt-10 text-sm text-[#595959]">
         Need something custom? <a href="#contact" className="link-underline text-[#121212]">Get in touch</a> for a tailored quote.
       </p>
+
+      {/* Add-ons */}
+      <div className="mt-20 pt-16 border-t border-[#121212]" data-testid="addons-block">
+        <div className="flex flex-col md:flex-row items-start md:items-end justify-between gap-6 mb-10">
+          <div>
+            <div className="overline">Add-ons</div>
+            <h3 className="font-display text-4xl md:text-5xl leading-[0.95] mt-3 tracking-tight">
+              Bolt-ons, <em className="italic">à la carte</em>.
+            </h3>
+          </div>
+          <p className="max-w-sm text-[#595959]">
+            Attach any of these to a package — or buy them stand-alone. Fixed
+            prices, no surprise line items.
+          </p>
+        </div>
+
+        <ul className="border-t border-[#D5D3CB]" data-testid="addons-list">
+          {addons.map((a, i) => (
+            <li
+              key={a.name}
+              data-testid={`addon-${i}`}
+              className="flex items-center justify-between py-5 border-b border-[#D5D3CB] group hover:pl-3 transition-[padding]"
+            >
+              <div className="flex items-center gap-4">
+                <span className="font-mono text-xs tracking-[0.2em] text-[#595959] w-10">
+                  {String(i + 1).padStart(2, "0")}
+                </span>
+                <span className="font-display text-2xl md:text-3xl tracking-tight">
+                  {a.name}
+                </span>
+              </div>
+              <span className="font-mono text-sm md:text-base text-[#121212] group-hover:text-[#E83B22] transition-colors">
+                {a.price}
+              </span>
+            </li>
+          ))}
+        </ul>
+
+        <p className="mt-8 text-xs font-mono text-[#595959]">
+          Prices in USD, exclusive of applicable tax. Bundling two or more
+          add-ons often unlocks a small discount — ask on the call.
+        </p>
+      </div>
     </div>
   </section>
 );
@@ -882,6 +936,10 @@ const faqs = [
   {
     q: "What's included in maintenance?",
     a: "Framework + plugin updates, uptime monitoring, weekly backups, quick content edits, monthly analytics check-in, and a 30-minute call if you need it. Fixed monthly rate, no surprise invoices.",
+  },
+  {
+    q: "Can I cancel the monthly maintenance?",
+    a: "Absolutely — no lock-in. Give 30 days' written notice, and I export your codebase, hand over DNS + CMS + analytics access, and you can host anywhere. Your final month is billed in full (non-refundable) and covers the handover work. Clean break, no hostage-taking.",
   },
   {
     q: "Do I keep ownership of the site?",
