@@ -273,3 +273,8 @@ button {
         display: none !important;
     }
 }
+
+/* Hide horizontal scrollbar on mobile carousels (scroll-snap still works) */
+[data-testid="testimonials-carousel"]::-webkit-scrollbar {
+    display: none;
+}

@@ -933,11 +933,42 @@ const Testimonials = () => (
   <section className="py-24 md:py-32 border-t border-[#D5D3CB] bg-[#EAE9E4]">
     <div className="max-w-7xl mx-auto px-6 md:px-12">
       <div className="overline">Kind words / 06</div>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-8">
+
+      {/* Mobile: horizontal snap-carousel. Desktop: 3-col grid */}
+      <div
+        className="mt-8 md:hidden -mx-6 px-6 flex gap-4 overflow-x-auto snap-x snap-mandatory scroll-smooth pb-4"
+        data-testid="testimonials-carousel"
+        style={{ scrollbarWidth: "none" }}
+      >
         {testimonials.map((t, i) => (
           <blockquote
             key={i}
             data-testid={`testimonial-${i}`}
+            className="snap-start flex-shrink-0 w-[85%] p-8 bg-[#F3F2ED] border border-[#D5D3CB]"
+          >
+            <div className="flex gap-1 mb-4 text-[#E83B22]">
+              {[...Array(5)].map((_, j) => (
+                <Star key={j} size={14} fill="currentColor" stroke="none" />
+              ))}
+            </div>
+            <p className="font-display text-2xl leading-snug tracking-tight">
+              "{t.q}"
+            </p>
+            <footer className="mt-6 overline">
+              {t.a} — {t.r}
+            </footer>
+          </blockquote>
+        ))}
+      </div>
+      <p className="md:hidden mt-2 font-mono text-[0.65rem] tracking-[0.22em] text-[#595959] uppercase">
+        ← Swipe →
+      </p>
+
+      <div className="hidden md:grid grid-cols-3 gap-8 mt-8">
+        {testimonials.map((t, i) => (
+          <blockquote
+            key={i}
+            data-testid={`testimonial-desktop-${i}`}
             className="fade-in p-8 bg-[#F3F2ED] border border-[#D5D3CB]"
           >
             <div className="flex gap-1 mb-4 text-[#E83B22]">
