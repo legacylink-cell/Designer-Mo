@@ -260,3 +260,16 @@ button {
     background: var(--line);
     width: 100%;
 }
+
+/* Mobile header safety — ensure CTAs fully hide on narrow screens regardless of utility conflicts */
+@media (max-width: 767.98px) {
+    [data-testid="header-book-call"],
+    [data-testid="header-cta"] {
+        display: none !important;
+    }
+}
+@media (max-width: 1023.98px) {
+    [data-testid="header-book-call"] {
+        display: none !important;
+    }
+}

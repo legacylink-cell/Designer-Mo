@@ -175,14 +175,14 @@ const Header = () => {
             data-cal-link={CAL_LINK}
             data-cal-config='{"layout":"month_view","theme":"light"}'
             data-testid="header-book-call"
-            className="btn-ghost hidden lg:inline-flex"
+            className="btn-ghost !hidden lg:!inline-flex"
           >
             <CalendarDays size={14} /> Book Call
           </button>
           <a
             href="#contact"
             data-testid="header-cta"
-            className="btn-primary hidden sm:inline-flex"
+            className="btn-primary !hidden md:!inline-flex"
           >
             Hire Me <ArrowUpRight size={14} />
           </a>
@@ -207,6 +207,27 @@ const Header = () => {
           <a href="#book" onClick={() => setOpen(false)}>Book</a>
           <a href="#about" onClick={() => setOpen(false)}>About</a>
           <a href="#contact" onClick={() => setOpen(false)}>Contact</a>
+          <div className="mt-2 pt-4 border-t border-[#D5D3CB] flex flex-col sm:flex-row gap-3">
+            <button
+              type="button"
+              data-cal-namespace="intro"
+              data-cal-link={CAL_LINK}
+              data-cal-config='{"layout":"month_view","theme":"light"}'
+              data-testid="mobile-menu-book-call"
+              onClick={() => setOpen(false)}
+              className="btn-ghost justify-center"
+            >
+              <CalendarDays size={14} /> Book a Call
+            </button>
+            <a
+              href="#contact"
+              data-testid="mobile-menu-hire"
+              onClick={() => setOpen(false)}
+              className="btn-primary justify-center"
+            >
+              Hire Me <ArrowUpRight size={14} />
+            </a>
+          </div>
         </div>
       )}
     </header>
