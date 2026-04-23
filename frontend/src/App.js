@@ -16,6 +16,8 @@ import {
   Search,
   Wrench,
   CalendarDays,
+  Plus,
+  Minus,
 } from "lucide-react";
 
 import { Input } from "@/components/ui/input";
@@ -158,14 +160,17 @@ const Header = () => {
           <a href="#services" data-testid="nav-services" className="link-underline">
             Services
           </a>
+          <a href="#process" data-testid="nav-process" className="link-underline">
+            Process
+          </a>
           <a href="#pricing" data-testid="nav-pricing" className="link-underline">
             Pricing
           </a>
+          <a href="#faq" data-testid="nav-faq" className="link-underline">
+            FAQ
+          </a>
           <a href="#book" data-testid="nav-book" className="link-underline">
             Book
-          </a>
-          <a href="#about" data-testid="nav-about" className="link-underline">
-            About
           </a>
         </nav>
         <div className="flex items-center gap-3">
@@ -203,7 +208,9 @@ const Header = () => {
         >
           <a href="#work" onClick={() => setOpen(false)}>Work</a>
           <a href="#services" onClick={() => setOpen(false)}>Services</a>
+          <a href="#process" onClick={() => setOpen(false)}>Process</a>
           <a href="#pricing" onClick={() => setOpen(false)}>Pricing</a>
+          <a href="#faq" onClick={() => setOpen(false)}>FAQ</a>
           <a href="#book" onClick={() => setOpen(false)}>Book</a>
           <a href="#about" onClick={() => setOpen(false)}>About</a>
           <a href="#contact" onClick={() => setOpen(false)}>Contact</a>
@@ -571,12 +578,90 @@ const tiers = [
   },
 ];
 
+/* ---------- Process ---------- */
+const steps = [
+  {
+    n: "01",
+    t: "Discovery",
+    d: "~1 week",
+    body:
+      "We scope goals, audience, success metrics. You get a brief — I get a brain-dump. We align on everything before a pixel is drawn.",
+  },
+  {
+    n: "02",
+    t: "Design",
+    d: "~2 weeks",
+    body:
+      "I craft the visual system in Figma — art direction, type, layout. You see work at milestones, not just at the finish line. Revisions baked in.",
+  },
+  {
+    n: "03",
+    t: "Build",
+    d: "~2 weeks",
+    body:
+      "Hand-built in React, Next.js or Webflow. Fast, accessible, animated where it matters. Content + CMS + analytics wired up as we go.",
+  },
+  {
+    n: "04",
+    t: "Launch",
+    d: "~1 week",
+    body:
+      "Domain, SSL, SEO, redirects, handover. Post-launch sprint to fix the small stuff, then into maintenance if you've signed up.",
+  },
+];
+
+const Process = () => (
+  <section id="process" className="py-24 md:py-32 border-t border-[#D5D3CB]" data-testid="process-section">
+    <div className="max-w-7xl mx-auto px-6 md:px-12">
+      <div className="flex flex-col md:flex-row items-start md:items-end justify-between gap-6 mb-12">
+        <div>
+          <div className="overline">Process / 03</div>
+          <h2 className="font-display text-5xl md:text-7xl leading-[0.95] mt-4 tracking-tight">
+            How we work.
+          </h2>
+        </div>
+        <p className="max-w-sm text-[#595959]">
+          Clear phases, fixed deliverables, zero handoffs. I'm your single
+          point of contact from kickoff to launch.
+        </p>
+      </div>
+
+      <ol className="grid grid-cols-1 md:grid-cols-4 gap-0 border-t border-[#121212]">
+        {steps.map((s, i) => (
+          <li
+            key={s.n}
+            data-testid={`process-step-${s.n}`}
+            className={`fade-in relative p-8 md:p-10 border-b md:border-b-0 border-[#121212] ${
+              i !== 0 ? "md:border-l" : ""
+            } transition-colors group hover:bg-[#121212] hover:text-[#F3F2ED]`}
+          >
+            <div className="flex items-center justify-between">
+              <span className="font-mono text-xs tracking-[0.22em] text-[#595959] group-hover:text-[#D5D3CB]">
+                STEP {s.n}
+              </span>
+              <span className="font-mono text-xs tracking-[0.18em] text-[#E83B22]">
+                {s.d}
+              </span>
+            </div>
+            <h3 className="font-display text-5xl md:text-6xl leading-none mt-10 tracking-tight">
+              {s.t}
+            </h3>
+            <p className="mt-6 text-sm md:text-base leading-relaxed text-[#595959] group-hover:text-[#EAE9E4] max-w-xs">
+              {s.body}
+            </p>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+);
+
 const Pricing = () => (
   <section id="pricing" className="py-24 md:py-32 border-t border-[#D5D3CB]">
     <div className="max-w-7xl mx-auto px-6 md:px-12">
       <div className="flex flex-col md:flex-row items-start md:items-end justify-between gap-6 mb-12">
         <div>
-          <div className="overline">Pricing / 03</div>
+          <div className="overline">Pricing / 04</div>
           <h2 className="font-display text-5xl md:text-7xl leading-[0.95] mt-4 tracking-tight">
             Transparent rates.<br />No surprises.
           </h2>
@@ -659,26 +744,8 @@ const works = [
     c: "SaaS · Digital Security",
     img: "/portfolio/e-vault.jpg",
     href: "https://www.e-vault-app.com",
-    span: "md:col-span-7",
+    span: "md:col-span-12",
     fit: "contain",
-  },
-  {
-    t: "Field Coffee Co.",
-    c: "E-commerce · Food",
-    img: "https://images.pexels.com/photos/6278748/pexels-photo-6278748.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=900&w=1400",
-    span: "md:col-span-5",
-  },
-  {
-    t: "Hestia Studio",
-    c: "Agency · Portfolio",
-    img: "https://images.unsplash.com/photo-1522199710521-72d69614c702?auto=format&fit=crop&w=1400&q=80",
-    span: "md:col-span-5",
-  },
-  {
-    t: "Northwind Finance",
-    c: "Marketing · Fintech",
-    img: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1400&q=80",
-    span: "md:col-span-7",
   },
 ];
 
@@ -687,14 +754,14 @@ const Portfolio = () => (
     <div className="max-w-7xl mx-auto px-6 md:px-12">
       <div className="flex flex-col md:flex-row items-start md:items-end justify-between gap-6 mb-12">
         <div>
-          <div className="overline">Selected Work / 04</div>
+          <div className="overline">Latest Work / 05</div>
           <h2 className="font-display text-5xl md:text-7xl leading-[0.95] mt-4 tracking-tight">
-            A few recent <em className="italic">things</em>.
+            A recent <em className="italic">build</em>.
           </h2>
         </div>
         <p className="max-w-sm text-[#595959]">
-          A sample of brands I've helped launch, relaunch, and grow. Full case
-          studies on request.
+          Featured project below. Full case-study portfolio available on
+          request — just ask on the call or the form.
         </p>
       </div>
 
@@ -777,7 +844,7 @@ const testimonials = [
 const Testimonials = () => (
   <section className="py-24 md:py-32 border-t border-[#D5D3CB] bg-[#EAE9E4]">
     <div className="max-w-7xl mx-auto px-6 md:px-12">
-      <div className="overline">Kind words / 05</div>
+      <div className="overline">Kind words / 06</div>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-8">
         {testimonials.map((t, i) => (
           <blockquote
@@ -802,6 +869,109 @@ const Testimonials = () => (
     </div>
   </section>
 );
+
+/* ---------- FAQ ---------- */
+const faqs = [
+  {
+    q: "Why not just use a template?",
+    a: "Templates get you online fast. They don't get you noticed, ranked, or remembered. Every brand I build for has a distinct voice — the site should, too. You'll always pay for it later in redesigns and lost conversions.",
+  },
+  {
+    q: "How long does a project take?",
+    a: "Starter ~2 weeks. Professional 3–4 weeks. Premium ~6 weeks. The clock starts once the deposit lands and the brief is signed off.",
+  },
+  {
+    q: "What's included in maintenance?",
+    a: "Framework + plugin updates, uptime monitoring, weekly backups, quick content edits, monthly analytics check-in, and a 30-minute call if you need it. Fixed monthly rate, no surprise invoices.",
+  },
+  {
+    q: "Do I keep ownership of the site?",
+    a: "100%. The code, design files, and domain are yours. I build host-agnostic — you can move the site anywhere without locking you into a platform.",
+  },
+  {
+    q: "Do you work from existing designs or only from scratch?",
+    a: "Both. Send Figma files and I'll build from them. Have rough ideas? I'll design from there. Middle ground — moodboards, competitor screenshots — works great too.",
+  },
+  {
+    q: "How do we get started?",
+    a: "Book a free 20-minute intro call above, fill the contact form, or email directly. You'll get a fixed quote + timeline within 48 hours — no pressure, no boilerplate.",
+  },
+];
+
+const FaqItem = ({ f, i, open, onToggle }) => (
+  <div
+    data-testid={`faq-item-${i}`}
+    className={`border-b border-[#121212] py-6 transition-colors ${
+      open ? "bg-[#EAE9E4] -mx-6 md:-mx-10 px-6 md:px-10" : ""
+    }`}
+  >
+    <button
+      type="button"
+      onClick={onToggle}
+      data-testid={`faq-toggle-${i}`}
+      className="w-full flex items-start justify-between gap-6 text-left"
+      aria-expanded={open}
+    >
+      <span className="font-display text-2xl md:text-3xl leading-tight tracking-tight">
+        {f.q}
+      </span>
+      <span
+        className={`flex-shrink-0 mt-1 transition-transform duration-300 ${
+          open ? "rotate-45 text-[#E83B22]" : ""
+        }`}
+        aria-hidden="true"
+      >
+        <Plus size={22} strokeWidth={1.5} />
+      </span>
+    </button>
+    <div
+      className={`overflow-hidden transition-all duration-300 ease-out ${
+        open ? "max-h-[400px] opacity-100 mt-4" : "max-h-0 opacity-0"
+      }`}
+    >
+      <p className="text-[#595959] leading-relaxed max-w-3xl text-base md:text-lg">
+        {f.a}
+      </p>
+    </div>
+  </div>
+);
+
+const FAQ = () => {
+  const [openIdx, setOpenIdx] = useState(0);
+  return (
+    <section
+      id="faq"
+      className="py-24 md:py-32 border-t border-[#D5D3CB]"
+      data-testid="faq-section"
+    >
+      <div className="max-w-7xl mx-auto px-6 md:px-12 grid grid-cols-1 md:grid-cols-12 gap-10 md:gap-16">
+        <div className="md:col-span-4">
+          <div className="overline">FAQ / 07</div>
+          <h2 className="font-display text-5xl md:text-7xl leading-[0.95] mt-4 tracking-tight">
+            Common<br />questions<span className="text-[#E83B22]">.</span>
+          </h2>
+          <p className="mt-6 text-[#595959] max-w-xs">
+            Anything else? Ask on the call or hit the contact form — I reply
+            within 24 hours.
+          </p>
+        </div>
+        <div className="md:col-span-8 md:pl-6 md:border-l border-[#D5D3CB]">
+          <div className="border-t border-[#121212]">
+            {faqs.map((f, i) => (
+              <FaqItem
+                key={i}
+                f={f}
+                i={i}
+                open={openIdx === i}
+                onToggle={() => setOpenIdx(openIdx === i ? -1 : i)}
+              />
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+};
 
 /* ---------- Booking (Cal.com with pre-qualify) ---------- */
 const Booking = () => {
@@ -875,7 +1045,7 @@ const Booking = () => {
       <div className="max-w-7xl mx-auto px-6 md:px-12">
         <div className="grid grid-cols-1 md:grid-cols-12 gap-10 md:gap-16 items-start">
           <div className="md:col-span-5">
-            <div className="overline">Book / 06</div>
+            <div className="overline">Book / 08</div>
             <h2 className="font-display text-5xl md:text-7xl leading-[0.95] tracking-tight mt-4">
               Grab a 20-min<br />intro call<span className="text-[#E83B22]">.</span>
             </h2>
@@ -1098,7 +1268,7 @@ const Contact = () => {
     >
       <div className="max-w-7xl mx-auto px-6 md:px-12 grid grid-cols-1 md:grid-cols-12 gap-12">
         <div className="md:col-span-5">
-          <div className="overline !text-[#D5D3CB]">Contact / 07</div>
+          <div className="overline !text-[#D5D3CB]">Contact / 09</div>
           <h2 className="font-display text-6xl md:text-8xl leading-[0.9] tracking-tight mt-4">
             Let's build<br />it<span className="text-[#E83B22]">.</span>
           </h2>
@@ -1302,9 +1472,11 @@ const Landing = () => {
         <TrustStrip />
         <About />
         <Services />
+        <Process />
         <Pricing />
         <Portfolio />
         <Testimonials />
+        <FAQ />
         <Booking />
         <Contact />
       </main>
