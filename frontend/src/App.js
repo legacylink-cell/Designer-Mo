@@ -660,6 +660,7 @@ const works = [
     img: "/portfolio/e-vault.jpg",
     href: "https://www.e-vault-app.com",
     span: "md:col-span-7",
+    fit: "contain",
   },
   {
     t: "Field Coffee Co.",
@@ -701,11 +702,17 @@ const Portfolio = () => (
         {works.map((w, i) => {
           const Inner = (
             <>
-              <div className="overflow-hidden">
+              <div
+                className={`overflow-hidden ${
+                  w.fit === "contain" ? "bg-[#F3F2ED] flex items-center justify-center" : ""
+                }`}
+              >
                 <img
                   src={w.img}
                   alt={w.t}
-                  className="w-full h-[420px] md:h-[520px] object-cover transition-transform duration-700 group-hover:scale-[1.03]"
+                  className={`w-full h-[420px] md:h-[520px] transition-transform duration-700 group-hover:scale-[1.03] ${
+                    w.fit === "contain" ? "object-contain p-6" : "object-cover"
+                  }`}
                   loading="lazy"
                 />
               </div>
