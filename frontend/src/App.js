@@ -1166,8 +1166,8 @@ const Booking = () => {
       data-testid="booking-section"
     >
       <div className="max-w-7xl mx-auto px-6 md:px-12">
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-10 md:gap-16 items-start">
-          <div className="md:col-span-5">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 md:gap-16 items-start">
+          <div className="lg:col-span-5">
             <div className="overline">Book / 08</div>
             <h2 className="font-display text-5xl md:text-7xl leading-[0.95] tracking-tight mt-4">
               Grab a 20-min<br />intro call<span className="text-[#E83B22]">.</span>
@@ -1204,7 +1204,7 @@ const Booking = () => {
           </div>
 
           <div
-            className="md:col-span-7 border border-[#121212] bg-[#F3F2ED] p-8 md:p-10"
+            className="lg:col-span-7 border border-[#121212] bg-[#F3F2ED] p-8 md:p-10"
             data-testid="booking-prequalify-card"
           >
             <div className="flex items-center justify-between mb-8">
@@ -1389,10 +1389,10 @@ const Contact = () => {
       className="py-24 md:py-32 bg-[#121212] text-[#F3F2ED]"
       data-testid="contact-section"
     >
-      <div className="max-w-7xl mx-auto px-6 md:px-12 grid grid-cols-1 md:grid-cols-12 gap-12">
-        <div className="md:col-span-5">
+      <div className="max-w-7xl mx-auto px-6 md:px-12 grid grid-cols-1 lg:grid-cols-12 gap-12">
+        <div className="lg:col-span-5">
           <div className="overline !text-[#D5D3CB]">Contact / 09</div>
-          <h2 className="font-display text-6xl md:text-8xl leading-[0.9] tracking-tight mt-4">
+          <h2 className="font-display text-5xl md:text-6xl lg:text-8xl leading-[0.9] tracking-tight mt-4">
             Let's build<br />it<span className="text-[#E83B22]">.</span>
           </h2>
           <p className="mt-8 text-lg md:text-xl text-[#D5D3CB] max-w-md">
@@ -1419,7 +1419,7 @@ const Contact = () => {
         <form
           onSubmit={onSubmit}
           noValidate
-          className="md:col-span-7 grid grid-cols-1 md:grid-cols-2 gap-8 field-line"
+          className="lg:col-span-7 grid grid-cols-1 md:grid-cols-2 gap-8 field-line"
           data-testid="contact-form"
         >
           <div>
