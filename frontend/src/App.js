@@ -643,7 +643,7 @@ const Process = () => (
                 {s.d}
               </span>
             </div>
-            <h3 className="font-display text-5xl md:text-6xl leading-none mt-10 tracking-tight">
+            <h3 className="font-display text-4xl md:text-5xl leading-none mt-10 tracking-tight break-words">
               {s.t}
             </h3>
             <p className="mt-6 text-sm md:text-base leading-relaxed text-[#595959] group-hover:text-[#EAE9E4] max-w-xs">
@@ -745,7 +745,6 @@ const works = [
     img: "/portfolio/e-vault.jpg",
     href: "https://www.e-vault-app.com",
     span: "md:col-span-12",
-    fit: "contain",
   },
 ];
 
