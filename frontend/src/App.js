@@ -936,7 +936,7 @@ const FaqItem = ({ f, i, open, onToggle }) => (
 );
 
 const FAQ = () => {
-  const [openIdx, setOpenIdx] = useState(0);
+  const [openIdx, setOpenIdx] = useState(-1);
   return (
     <section
       id="faq"
