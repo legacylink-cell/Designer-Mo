@@ -1419,7 +1419,7 @@ const Contact = () => {
         <form
           onSubmit={onSubmit}
           noValidate
-          className="lg:col-span-7 grid grid-cols-1 md:grid-cols-2 gap-8 field-line"
+          className="lg:col-span-7 grid grid-cols-1 md:grid-cols-2 gap-8 field-line field-line-dark"
           data-testid="contact-form"
         >
           <div>
@@ -1429,8 +1429,6 @@ const Contact = () => {
               value={form.name}
               onChange={update("name")}
               placeholder="Your full name"
-              className="text-[#F3F2ED]"
-              style={{ color: "#F3F2ED", borderBottomColor: "#F3F2ED" }}
               required
             />
           </div>
@@ -1442,7 +1440,6 @@ const Contact = () => {
               value={form.email}
               onChange={update("email")}
               placeholder="you@company.com"
-              style={{ color: "#F3F2ED", borderBottomColor: "#F3F2ED" }}
               required
             />
           </div>
@@ -1454,7 +1451,6 @@ const Contact = () => {
               value={form.company}
               onChange={update("company")}
               placeholder="Optional"
-              style={{ color: "#F3F2ED", borderBottomColor: "#F3F2ED" }}
             />
           </div>
 
@@ -1467,8 +1463,7 @@ const Contact = () => {
               <SelectTrigger
                 data-testid="contact-project-type"
                 data-field
-                className="bg-transparent text-[#F3F2ED] border-0 border-b-[1.5px] rounded-none px-0 focus:ring-0"
-                style={{ color: "#F3F2ED", borderBottomColor: "#F3F2ED" }}
+                className="bg-transparent border-0 border-b-[1.5px] rounded-none px-0 focus:ring-0"
               >
                 <SelectValue placeholder="Select a service" />
               </SelectTrigger>
@@ -1492,8 +1487,7 @@ const Contact = () => {
               <SelectTrigger
                 data-testid="contact-budget"
                 data-field
-                className="bg-transparent text-[#F3F2ED] border-0 border-b-[1.5px] rounded-none px-0 focus:ring-0"
-                style={{ color: "#F3F2ED", borderBottomColor: "#F3F2ED" }}
+                className="bg-transparent border-0 border-b-[1.5px] rounded-none px-0 focus:ring-0"
               >
                 <SelectValue placeholder="Select a budget range" />
               </SelectTrigger>
@@ -1515,7 +1509,6 @@ const Contact = () => {
               onChange={update("message")}
               rows={4}
               placeholder="Goals, timeline, inspiration, anything relevant…"
-              style={{ color: "#F3F2ED", borderBottomColor: "#F3F2ED" }}
               required
             />
           </div>

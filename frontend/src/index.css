@@ -218,6 +218,26 @@ button {
     border-bottom-color: var(--accent) !important;
 }
 
+/* Dark-theme variant — used on the Contact form (dark section background) */
+.field-line-dark input,
+.field-line-dark textarea,
+.field-line-dark [data-field] {
+    border-bottom-color: var(--bg) !important;
+    color: var(--bg) !important;
+}
+.field-line-dark input::placeholder,
+.field-line-dark textarea::placeholder {
+    color: rgba(243, 242, 237, 0.45) !important;
+}
+.field-line-dark input:focus,
+.field-line-dark textarea:focus,
+.field-line-dark [data-field]:focus {
+    border-bottom-color: var(--accent) !important;
+}
+.field-line-dark [data-field] [data-placeholder] {
+    color: rgba(243, 242, 237, 0.45) !important;
+}
+
 /* Overline */
 .overline {
     text-transform: uppercase;
