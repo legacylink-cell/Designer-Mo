@@ -348,8 +348,8 @@ const TrustStrip = () => (
   <section className="py-8 border-y border-[#D5D3CB]" data-testid="trust-strip">
     <div className="max-w-7xl mx-auto px-6 md:px-12 grid grid-cols-2 md:grid-cols-4 gap-6">
       {[
-        { k: "10+", v: "Years in design" },
-        { k: "80+", v: "Launched sites" },
+        { k: "5+", v: "Years in design" },
+        { k: "50+", v: "Launched sites" },
         { k: "4.9/5", v: "Client rating" },
         { k: "EU / US", v: "Time zones" },
       ].map((s) => (
@@ -655,9 +655,10 @@ const Pricing = () => (
 /* ---------- Portfolio ---------- */
 const works = [
   {
-    t: "Atelier Nord",
-    c: "Editorial · Fashion",
-    img: "https://images.pexels.com/photos/4884116/pexels-photo-4884116.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=900&w=1400",
+    t: "E-Vault",
+    c: "SaaS · Digital Security",
+    img: "/portfolio/e-vault.jpg",
+    href: "https://www.e-vault-app.com",
     span: "md:col-span-7",
   },
   {
@@ -697,28 +698,51 @@ const Portfolio = () => (
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
-        {works.map((w, i) => (
-          <figure
-            key={w.t}
-            data-testid={`work-item-${i}`}
-            className={`fade-in group overflow-hidden border border-[#121212] ${w.span}`}
-          >
-            <div className="overflow-hidden">
-              <img
-                src={w.img}
-                alt={w.t}
-                className="w-full h-[420px] md:h-[520px] object-cover transition-transform duration-700 group-hover:scale-[1.03]"
-              />
-            </div>
-            <figcaption className="flex items-center justify-between px-4 py-3 border-t border-[#121212] bg-[#F3F2ED]">
-              <div>
-                <div className="font-display text-xl leading-none">{w.t}</div>
-                <div className="overline mt-1 !text-[0.65rem]">{w.c}</div>
+        {works.map((w, i) => {
+          const Inner = (
+            <>
+              <div className="overflow-hidden">
+                <img
+                  src={w.img}
+                  alt={w.t}
+                  className="w-full h-[420px] md:h-[520px] object-cover transition-transform duration-700 group-hover:scale-[1.03]"
+                  loading="lazy"
+                />
               </div>
-              <ArrowUpRight size={18} className="group-hover:text-[#E83B22] transition-colors" />
-            </figcaption>
-          </figure>
-        ))}
+              <figcaption className="flex items-center justify-between px-4 py-3 border-t border-[#121212] bg-[#F3F2ED]">
+                <div>
+                  <div className="font-display text-xl leading-none">{w.t}</div>
+                  <div className="overline mt-1 !text-[0.65rem]">{w.c}</div>
+                </div>
+                <ArrowUpRight size={18} className="group-hover:text-[#E83B22] transition-colors" />
+              </figcaption>
+            </>
+          );
+          const common = `fade-in group overflow-hidden border border-[#121212] block ${w.span}`;
+          if (w.href) {
+            return (
+              <a
+                key={w.t}
+                href={w.href}
+                target="_blank"
+                rel="noreferrer"
+                data-testid={`work-item-${i}`}
+                className={common}
+              >
+                {Inner}
+              </a>
+            );
+          }
+          return (
+            <figure
+              key={w.t}
+              data-testid={`work-item-${i}`}
+              className={common}
+            >
+              {Inner}
+            </figure>
+          );
+        })}
       </div>
     </div>
   </section>
@@ -727,9 +751,9 @@ const Portfolio = () => (
 /* ---------- Testimonials ---------- */
 const testimonials = [
   {
-    q: "Mo redesigned our site and traffic doubled in three months. He gets both the art and the analytics.",
-    a: "Lena K.",
-    r: "Founder, Atelier Nord",
+    q: "Mo designed and built E-Vault end-to-end. The security dashboard is clearer than most banks' — our users actually understand their own risk score. Rare.",
+    a: "A. Rivera",
+    r: "Co-founder, E-Vault",
   },
   {
     q: "Easy to work with, incredibly precise. The site feels like a printed magazine — in the best way.",
