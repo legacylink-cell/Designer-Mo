@@ -524,14 +524,46 @@ const Services = () => {
 
 /* ---------- Pricing ---------- */
 const addons = [
-  { name: "Extra page", price: "$350" },
-  { name: "Logo mark", price: "$450" },
-  { name: "Full brand identity", price: "$1,200" },
-  { name: "Copywriting (per ~400-word section)", price: "$180" },
-  { name: "SEO launch pack", price: "$900" },
-  { name: "E-commerce setup (Shopify / Stripe)", price: "$1,200" },
-  { name: "Monthly maintenance", price: "from $150 / mo" },
-  { name: "Rush delivery (under 2 weeks)", price: "+30%" },
+  {
+    name: "Extra page",
+    price: "$350",
+    desc: "One more fully-designed, CMS-ready page beyond your tier's allotment.",
+  },
+  {
+    name: "Logo mark",
+    price: "$450",
+    desc: "A distinctive logo with 2 revision rounds. Delivered as SVG, PNG, and favicon set.",
+  },
+  {
+    name: "Full brand identity",
+    price: "$1,200",
+    desc: "Logo + palette + typography + a 15-page usage guide. Everything you need to feel official.",
+  },
+  {
+    name: "Copywriting (per ~400-word section)",
+    price: "$180",
+    desc: "I write the words — SEO-aware, on-brand, one revision round. For pages that look finished but read empty.",
+  },
+  {
+    name: "SEO launch pack",
+    price: "$900",
+    desc: "Keywords, meta, schema, sitemap, Search Console + GA4 wired up. So you actually show up on Google.",
+  },
+  {
+    name: "E-commerce setup (Shopify / Stripe)",
+    price: "$1,200",
+    desc: "Up to 10 products, cart + checkout, tax & shipping rules, confirmation emails. Your site, now taking money.",
+  },
+  {
+    name: "Monthly maintenance",
+    price: "from $150 / mo",
+    desc: "Updates, backups, monitoring, edit hours, and a monthly check-in. The safety net that keeps the site alive.",
+  },
+  {
+    name: "Rush delivery (under 2 weeks)",
+    price: "+30%",
+    desc: "Skip the queue. I drop other work to ship your project on an aggressive timeline.",
+  },
 ];
 
 const tiers = [
@@ -765,17 +797,20 @@ const Pricing = () => (
             <li
               key={a.name}
               data-testid={`addon-${i}`}
-              className="flex items-center justify-between py-5 border-b border-[#D5D3CB] group hover:pl-3 transition-[padding]"
+              className="grid grid-cols-12 gap-4 md:gap-8 items-start py-6 border-b border-[#D5D3CB] group hover:pl-3 transition-[padding]"
             >
-              <div className="flex items-center gap-4">
-                <span className="font-mono text-xs tracking-[0.2em] text-[#595959] w-10">
-                  {String(i + 1).padStart(2, "0")}
-                </span>
-                <span className="font-display text-2xl md:text-3xl tracking-tight">
+              <span className="col-span-1 font-mono text-xs tracking-[0.2em] text-[#595959] pt-2">
+                {String(i + 1).padStart(2, "0")}
+              </span>
+              <div className="col-span-11 md:col-span-8">
+                <div className="font-display text-2xl md:text-3xl tracking-tight leading-tight">
                   {a.name}
-                </span>
+                </div>
+                <p className="mt-2 text-sm md:text-[0.95rem] text-[#595959] leading-relaxed max-w-2xl">
+                  {a.desc}
+                </p>
               </div>
-              <span className="font-mono text-sm md:text-base text-[#121212] group-hover:text-[#E83B22] transition-colors">
+              <span className="col-span-12 md:col-span-3 md:text-right font-mono text-sm md:text-base text-[#121212] group-hover:text-[#E83B22] transition-colors pt-1 md:pt-2">
                 {a.price}
               </span>
             </li>
