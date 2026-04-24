@@ -4,6 +4,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import axios from "axios";
 import { Toaster, toast } from "sonner";
 import Admin from "@/Admin";
+import ReviewPage from "@/ReviewPage";
 import {
   ArrowUpRight,
   ArrowRight,
@@ -911,83 +912,128 @@ const Portfolio = () => (
 );
 
 /* ---------- Testimonials ---------- */
-const testimonials = [
+const hardcodedTestimonials = [
   {
-    q: "Mo designed and built E-Vault end-to-end. The security dashboard is clearer than most banks' — our users actually understand their own risk score. Rare.",
-    a: "A. Rivera",
-    r: "Co-founder, E-Vault",
+    quote: "Mo designed and built E-Vault end-to-end. The security dashboard is clearer than most banks' — our users actually understand their own risk score. Rare.",
+    name: "A. Rivera",
+    role: "Co-founder",
+    company: "E-Vault",
+    rating: 5,
+    photo_data_url: null,
   },
   {
-    q: "Easy to work with, incredibly precise. The site feels like a printed magazine — in the best way.",
-    a: "Daniel F.",
-    r: "CEO, Field Coffee Co.",
+    quote: "Easy to work with, incredibly precise. The site feels like a printed magazine — in the best way.",
+    name: "Daniel F.",
+    role: "CEO",
+    company: "Field Coffee Co.",
+    rating: 5,
+    photo_data_url: null,
   },
   {
-    q: "We finally look like the premium product we are. Our conversion rate jumped 38%.",
-    a: "Priya R.",
-    r: "Head of Marketing, Northwind",
+    quote: "We finally look like the premium product we are. Our conversion rate jumped 38%.",
+    name: "Priya R.",
+    role: "Head of Marketing",
+    company: "Northwind",
+    rating: 5,
+    photo_data_url: null,
   },
 ];
 
-const Testimonials = () => (
-  <section className="py-24 md:py-32 border-t border-[#D5D3CB] bg-[#EAE9E4]">
-    <div className="max-w-7xl mx-auto px-6 md:px-12">
-      <div className="overline">Kind words / 06</div>
+const normaliseReview = (r) => ({
+  quote: r.quote,
+  name: r.name,
+  role: r.role || "",
+  company: r.company || "",
+  rating: r.rating || 5,
+  photo_data_url: r.photo_data_url || null,
+});
 
-      {/* Mobile: horizontal snap-carousel. Desktop: 3-col grid */}
-      <div
-        className="mt-8 md:hidden -mx-6 px-6 flex gap-4 overflow-x-auto snap-x snap-mandatory scroll-smooth pb-4"
-        data-testid="testimonials-carousel"
-        style={{ scrollbarWidth: "none" }}
-      >
-        {testimonials.map((t, i) => (
-          <blockquote
-            key={i}
-            data-testid={`testimonial-${i}`}
-            className="snap-start flex-shrink-0 w-[85%] p-8 bg-[#F3F2ED] border border-[#D5D3CB]"
-          >
-            <div className="flex gap-1 mb-4 text-[#E83B22]">
-              {[...Array(5)].map((_, j) => (
-                <Star key={j} size={14} fill="currentColor" stroke="none" />
-              ))}
-            </div>
-            <p className="font-display text-2xl leading-snug tracking-tight">
-              "{t.q}"
-            </p>
-            <footer className="mt-6 overline">
-              {t.a} — {t.r}
-            </footer>
-          </blockquote>
-        ))}
-      </div>
-      <p className="md:hidden mt-2 font-mono text-[0.65rem] tracking-[0.22em] text-[#595959] uppercase">
-        ← Swipe →
-      </p>
-
-      <div className="hidden md:grid grid-cols-3 gap-8 mt-8">
-        {testimonials.map((t, i) => (
-          <blockquote
-            key={i}
-            data-testid={`testimonial-desktop-${i}`}
-            className="fade-in p-8 bg-[#F3F2ED] border border-[#D5D3CB]"
-          >
-            <div className="flex gap-1 mb-4 text-[#E83B22]">
-              {[...Array(5)].map((_, j) => (
-                <Star key={j} size={14} fill="currentColor" stroke="none" />
-              ))}
-            </div>
-            <p className="font-display text-2xl leading-snug tracking-tight">
-              "{t.q}"
-            </p>
-            <footer className="mt-6 overline">
-              {t.a} — {t.r}
-            </footer>
-          </blockquote>
-        ))}
-      </div>
+const TestimonialCard = ({ t, testid }) => (
+  <blockquote
+    data-testid={testid}
+    className="fade-in p-8 bg-[#F3F2ED] border border-[#D5D3CB] h-full flex flex-col"
+  >
+    <div className="flex gap-1 mb-4 text-[#E83B22]">
+      {[...Array(Math.max(1, Math.min(5, t.rating || 5)))].map((_, j) => (
+        <Star key={j} size={14} fill="currentColor" stroke="none" />
+      ))}
     </div>
-  </section>
+    <p className="font-display text-2xl leading-snug tracking-tight flex-1">
+      "{t.quote}"
+    </p>
+    <footer className="mt-6 flex items-center gap-3">
+      {t.photo_data_url ? (
+        <img
+          src={t.photo_data_url}
+          alt={t.name}
+          className="w-10 h-10 object-cover border border-[#D5D3CB] grayscale"
+        />
+      ) : null}
+      <div className="overline">
+        {t.name}
+        {(t.role || t.company) && (
+          <> — {[t.role, t.company].filter(Boolean).join(", ")}</>
+        )}
+      </div>
+    </footer>
+  </blockquote>
 );
+
+const Testimonials = () => {
+  const [items, setItems] = useState(hardcodedTestimonials);
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const res = await axios.get(`${API}/reviews`);
+        if (cancelled) return;
+        const approved = Array.isArray(res.data) ? res.data : [];
+        if (approved.length > 0) {
+          setItems(approved.map(normaliseReview));
+        }
+      } catch {
+        // keep hardcoded fallback
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  return (
+    <section className="py-24 md:py-32 border-t border-[#D5D3CB] bg-[#EAE9E4]">
+      <div className="max-w-7xl mx-auto px-6 md:px-12">
+        <div className="overline">Kind words / 06</div>
+
+        {/* Mobile: horizontal snap-carousel. Desktop: 3-col grid */}
+        <div
+          className="mt-8 md:hidden -mx-6 px-6 flex gap-4 overflow-x-auto snap-x snap-mandatory scroll-smooth pb-4"
+          data-testid="testimonials-carousel"
+          style={{ scrollbarWidth: "none" }}
+        >
+          {items.map((t, i) => (
+            <div
+              key={i}
+              className="snap-start flex-shrink-0 w-[85%]"
+            >
+              <TestimonialCard t={t} testid={`testimonial-${i}`} />
+            </div>
+          ))}
+        </div>
+        <p className="md:hidden mt-2 font-mono text-[0.65rem] tracking-[0.22em] text-[#595959] uppercase">
+          ← Swipe →
+        </p>
+
+        <div className="hidden md:grid grid-cols-3 gap-8 mt-8">
+          {items.slice(0, 6).map((t, i) => (
+            <TestimonialCard key={i} t={t} testid={`testimonial-desktop-${i}`} />
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+};
 
 /* ---------- FAQ ---------- */
 const faqs = [
@@ -1609,6 +1655,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Landing />} />
           <Route path="/admin" element={<Admin />} />
+          <Route path="/review/:token" element={<ReviewPage />} />
         </Routes>
       </BrowserRouter>
     </div>

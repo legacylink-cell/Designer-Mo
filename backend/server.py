@@ -235,6 +235,252 @@ async def delete_contact(submission_id: str, _: bool = Depends(require_admin)):
     return {"ok": True, "deleted": submission_id}
 
 
+# ---------- Client Reviews ----------
+import secrets
+from datetime import timedelta
+
+
+class ReviewTokenCreate(BaseModel):
+    client_name: str = Field(min_length=1, max_length=120)
+    client_email: EmailStr
+    project: Optional[str] = Field(default=None, max_length=200)
+    send_email: bool = True
+
+
+class ReviewTokenOut(BaseModel):
+    token: str
+    client_name: str
+    client_email: EmailStr
+    project: Optional[str] = None
+    created_at: datetime
+    expires_at: datetime
+    used_at: Optional[datetime] = None
+    url: Optional[str] = None
+
+
+class ReviewSubmit(BaseModel):
+    token: str = Field(min_length=6, max_length=40)
+    name: str = Field(min_length=1, max_length=120)
+    role: Optional[str] = Field(default=None, max_length=160)
+    company: Optional[str] = Field(default=None, max_length=160)
+    quote: str = Field(min_length=10, max_length=600)
+    rating: int = Field(ge=1, le=5)
+    photo_data_url: Optional[str] = Field(default=None, max_length=500_000)  # ~400KB base64
+
+
+class Review(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+
+    id: str
+    name: str
+    role: Optional[str] = None
+    company: Optional[str] = None
+    quote: str
+    rating: int
+    photo_data_url: Optional[str] = None
+    approved: bool = False
+    submitted_at: datetime
+    approved_at: Optional[datetime] = None
+
+
+@api_router.post("/admin/review-tokens", response_model=ReviewTokenOut)
+async def create_review_token(
+    data: ReviewTokenCreate,
+    background_tasks: BackgroundTasks,
+    _: bool = Depends(require_admin),
+):
+    token = secrets.token_urlsafe(6).replace("-", "").replace("_", "")[:10].lower()
+    # Regenerate if collision (very unlikely)
+    while await db.review_tokens.find_one({"token": token}):
+        token = secrets.token_urlsafe(6)[:10].lower()
+    now = datetime.now(timezone.utc)
+    doc = {
+        "token": token,
+        "client_name": data.client_name,
+        "client_email": data.client_email,
+        "project": data.project,
+        "created_at": now.isoformat(),
+        "expires_at": (now + timedelta(days=60)).isoformat(),
+        "used_at": None,
+    }
+    await db.review_tokens.insert_one(doc)
+    if data.send_email and GMAIL_SENDER and GMAIL_APP_PASSWORD:
+        background_tasks.add_task(send_review_invite, doc)
+    return ReviewTokenOut(
+        token=token,
+        client_name=data.client_name,
+        client_email=data.client_email,
+        project=data.project,
+        created_at=now,
+        expires_at=now + timedelta(days=60),
+        used_at=None,
+    )
+
+
+async def send_review_invite(token_doc: dict) -> None:
+    try:
+        base_url = os.environ.get("PUBLIC_SITE_URL", "https://mohamedabouzeid.com").rstrip("/")
+        link = f"{base_url}/review/{token_doc['token']}"
+        name = _html_escape(token_doc.get("client_name", ""))
+        project = _html_escape(token_doc.get("project") or "your project")
+        html_body = f"""
+<!doctype html><html><body style="font-family:-apple-system,sans-serif;background:#F3F2ED;padding:32px;color:#121212;">
+<table style="max-width:560px;margin:0 auto;">
+<tr><td style="padding-bottom:24px;border-bottom:1px solid #D5D3CB;">
+<div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:0.18em;text-transform:uppercase;color:#595959;">Quick favour</div>
+<h1 style="font-family:Georgia,serif;font-size:30px;margin:8px 0 0 0;">Could I grab a review<span style="color:#E83B22;">?</span></h1>
+</td></tr>
+<tr><td style="padding:24px 0;font-size:15px;line-height:1.6;">
+<p>Hi {name},</p>
+<p>Hope {project} is going well. I'm building up social proof on the Mo Studio site and would be hugely grateful for a quick review — takes ~2 minutes.</p>
+<p>Just tap the button below, rate your experience, and leave a line or two. Attach a photo if you want it included.</p>
+<p style="text-align:center;padding:12px 0;">
+<a href="{link}" style="display:inline-block;background:#121212;color:#F3F2ED;padding:14px 24px;text-decoration:none;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:0.18em;text-transform:uppercase;">Leave a review →</a>
+</p>
+<p style="color:#595959;font-size:13px;">Or paste this link into your browser:<br/><a href="{link}" style="color:#121212;">{link}</a></p>
+<p>Thanks a million,<br/>Mo</p>
+</td></tr>
+</table></body></html>
+""".strip()
+        plain = f"Hi {token_doc.get('client_name','')},\n\nCould I grab a quick review for the Mo Studio site? Takes ~2 minutes.\n\n{link}\n\nThanks,\nMo"
+        msg = EmailMessage()
+        msg['Subject'] = "Quick favour — a review for Mo Studio?"
+        msg['From'] = f"Mo <{GMAIL_SENDER}>"
+        msg['To'] = token_doc['client_email']
+        msg['Reply-To'] = GMAIL_SENDER
+        msg.set_content(plain)
+        msg.add_alternative(html_body, subtype='html')
+
+        def _send():
+            with smtplib.SMTP_SSL('smtp.gmail.com', 465, timeout=15) as smtp:
+                smtp.login(GMAIL_SENDER, GMAIL_APP_PASSWORD)
+                smtp.send_message(msg)
+
+        await asyncio.to_thread(_send)
+        logger.info(f"Review invite sent to {token_doc['client_email']}")
+    except Exception as e:
+        logger.error(f"Review invite email failed: {e}")
+
+
+@api_router.get("/reviews/invite/{token}")
+async def get_review_invite(token: str):
+    doc = await db.review_tokens.find_one({"token": token}, {"_id": 0})
+    if not doc:
+        raise HTTPException(status_code=404, detail="Link not found")
+    now = datetime.now(timezone.utc)
+    if doc.get("used_at"):
+        raise HTTPException(status_code=410, detail="This link has already been used")
+    try:
+        expires = datetime.fromisoformat(doc["expires_at"])
+        if now > expires:
+            raise HTTPException(status_code=410, detail="This link has expired")
+    except (ValueError, KeyError):
+        pass
+    return {
+        "token": doc["token"],
+        "client_name": doc.get("client_name"),
+        "project": doc.get("project"),
+    }
+
+
+@api_router.post("/reviews")
+async def submit_review(payload: ReviewSubmit):
+    token_doc = await db.review_tokens.find_one({"token": payload.token})
+    if not token_doc:
+        raise HTTPException(status_code=404, detail="Invalid link")
+    if token_doc.get("used_at"):
+        raise HTTPException(status_code=410, detail="This link has already been used")
+    now = datetime.now(timezone.utc)
+    try:
+        expires = datetime.fromisoformat(token_doc["expires_at"])
+        if now > expires:
+            raise HTTPException(status_code=410, detail="This link has expired")
+    except (ValueError, KeyError):
+        pass
+
+    if payload.photo_data_url and not payload.photo_data_url.startswith("data:image/"):
+        raise HTTPException(status_code=400, detail="Invalid photo format")
+
+    review = {
+        "id": str(uuid.uuid4()),
+        "name": payload.name,
+        "role": payload.role,
+        "company": payload.company,
+        "quote": payload.quote,
+        "rating": payload.rating,
+        "photo_data_url": payload.photo_data_url,
+        "approved": False,
+        "submitted_at": now.isoformat(),
+        "approved_at": None,
+        "token": payload.token,
+    }
+    await db.reviews.insert_one(review)
+    await db.review_tokens.update_one(
+        {"token": payload.token},
+        {"$set": {"used_at": now.isoformat()}},
+    )
+    logger.info(f"New review submitted by {payload.name}")
+    return {"ok": True, "id": review["id"]}
+
+
+@api_router.get("/reviews")
+async def list_approved_reviews():
+    """Public endpoint — only returns approved reviews for the homepage."""
+    items = await db.reviews.find(
+        {"approved": True},
+        {"_id": 0, "token": 0},
+    ).sort("approved_at", -1).to_list(100)
+    for it in items:
+        for k in ("submitted_at", "approved_at"):
+            if isinstance(it.get(k), str):
+                try:
+                    it[k] = datetime.fromisoformat(it[k])
+                except ValueError:
+                    pass
+    return items
+
+
+@api_router.get("/admin/reviews")
+async def admin_list_reviews(_: bool = Depends(require_admin)):
+    reviews = await db.reviews.find({}, {"_id": 0}).sort("submitted_at", -1).to_list(500)
+    tokens = await db.review_tokens.find({}, {"_id": 0}).sort("created_at", -1).to_list(500)
+    base_url = os.environ.get("PUBLIC_SITE_URL", "https://mohamedabouzeid.com").rstrip("/")
+    for t in tokens:
+        t["url"] = f"{base_url}/review/{t['token']}"
+    return {"reviews": reviews, "tokens": tokens}
+
+
+@api_router.patch("/admin/reviews/{review_id}")
+async def admin_set_review_approval(
+    review_id: str,
+    body: dict,
+    _: bool = Depends(require_admin),
+):
+    approved = bool(body.get("approved"))
+    now_iso = datetime.now(timezone.utc).isoformat()
+    update = {"approved": approved, "approved_at": now_iso if approved else None}
+    res = await db.reviews.update_one({"id": review_id}, {"$set": update})
+    if res.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Review not found")
+    return {"ok": True, "approved": approved}
+
+
+@api_router.delete("/admin/reviews/{review_id}")
+async def admin_delete_review(review_id: str, _: bool = Depends(require_admin)):
+    res = await db.reviews.delete_one({"id": review_id})
+    if res.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Review not found")
+    return {"ok": True}
+
+
+@api_router.delete("/admin/review-tokens/{token}")
+async def admin_delete_review_token(token: str, _: bool = Depends(require_admin)):
+    res = await db.review_tokens.delete_one({"token": token})
+    if res.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Token not found")
+    return {"ok": True}
+
+
 # ---------- Analytics ----------
 class PageViewCreate(BaseModel):
     path: str = Field(default="/", max_length=200)

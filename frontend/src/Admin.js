@@ -13,6 +13,12 @@ import {
   Users,
   Inbox,
   TrendingUp,
+  Star,
+  Check,
+  X as XIcon,
+  Link2,
+  Copy,
+  Plus,
 } from "lucide-react";
 import {
   ResponsiveContainer,
@@ -399,6 +405,8 @@ const Dashboard = ({ token, onLogout }) => {
             </section>
 
             {/* Leads list */}
+            <ReviewsPanel token={token} onSessionExpired={onLogout} />
+
             <section className="mt-10">
               <div className="flex flex-col md:flex-row items-start md:items-end justify-between gap-4">
                 <div>
@@ -528,8 +536,334 @@ const Dashboard = ({ token, onLogout }) => {
   );
 };
 
-const BreakdownCard = ({ title, data, testid }) => {
-  const total = (data || []).reduce((acc, d) => acc + d.value, 0) || 1;
+/* ---------- Reviews panel ---------- */
+const ReviewsPanel = ({ token, onSessionExpired }) => {
+  const [data, setData] = useState({ reviews: [], tokens: [] });
+  const [loading, setLoading] = useState(true);
+  const [inviteForm, setInviteForm] = useState({
+    client_name: "",
+    client_email: "",
+    project: "",
+    send_email: true,
+  });
+  const [creating, setCreating] = useState(false);
+
+  const load = async () => {
+    setLoading(true);
+    try {
+      const res = await axios.get(`${API}/admin/reviews`, {
+        headers: { "X-Admin-Token": token },
+      });
+      setData(res.data);
+    } catch (err) {
+      if (err?.response?.status === 401) {
+        onSessionExpired();
+      } else {
+        toast.error("Could not load reviews.");
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    load();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const setApproval = async (id, approved) => {
+    try {
+      await axios.patch(
+        `${API}/admin/reviews/${id}`,
+        { approved },
+        { headers: { "X-Admin-Token": token } }
+      );
+      setData((d) => ({
+        ...d,
+        reviews: d.reviews.map((r) =>
+          r.id === id
+            ? { ...r, approved, approved_at: approved ? new Date().toISOString() : null }
+            : r
+        ),
+      }));
+      toast.success(approved ? "Published to site." : "Unpublished.");
+    } catch {
+      toast.error("Could not update.");
+    }
+  };
+
+  const remove = async (id) => {
+    if (!window.confirm("Delete this review?")) return;
+    try {
+      await axios.delete(`${API}/admin/reviews/${id}`, {
+        headers: { "X-Admin-Token": token },
+      });
+      setData((d) => ({ ...d, reviews: d.reviews.filter((r) => r.id !== id) }));
+      toast.success("Deleted.");
+    } catch {
+      toast.error("Could not delete.");
+    }
+  };
+
+  const removeToken = async (t) => {
+    if (!window.confirm("Delete this invite link?")) return;
+    try {
+      await axios.delete(`${API}/admin/review-tokens/${t}`, {
+        headers: { "X-Admin-Token": token },
+      });
+      setData((d) => ({ ...d, tokens: d.tokens.filter((x) => x.token !== t) }));
+      toast.success("Link deleted.");
+    } catch {
+      toast.error("Could not delete.");
+    }
+  };
+
+  const createInvite = async (e) => {
+    e.preventDefault();
+    if (!inviteForm.client_name || !inviteForm.client_email) {
+      toast.error("Name and email are required.");
+      return;
+    }
+    setCreating(true);
+    try {
+      const res = await axios.post(
+        `${API}/admin/review-tokens`,
+        inviteForm,
+        { headers: { "X-Admin-Token": token } }
+      );
+      const base = window.location.origin;
+      const url = `${base}/review/${res.data.token}`;
+      setData((d) => ({
+        ...d,
+        tokens: [{ ...res.data, url }, ...d.tokens],
+      }));
+      setInviteForm({ client_name: "", client_email: "", project: "", send_email: true });
+      toast.success(
+        inviteForm.send_email
+          ? `Invite emailed to ${res.data.client_email}.`
+          : `Link created — copy and send it manually.`
+      );
+    } catch {
+      toast.error("Could not create invite.");
+    } finally {
+      setCreating(false);
+    }
+  };
+
+  const copyLink = (url) => {
+    try {
+      navigator.clipboard.writeText(url);
+      toast.success("Link copied.");
+    } catch {
+      toast.error("Copy failed.");
+    }
+  };
+
+  const pending = data.reviews.filter((r) => !r.approved);
+  const published = data.reviews.filter((r) => r.approved);
+  const activeTokens = data.tokens.filter((t) => !t.used_at);
+
+  return (
+    <section className="mt-10" data-testid="reviews-panel">
+      <div className="flex flex-col md:flex-row items-start md:items-end justify-between gap-4">
+        <div>
+          <div className="overline">Reviews · client feedback</div>
+          <h2 className="font-display text-4xl md:text-5xl tracking-tighter mt-2">
+            {published.length} live · {pending.length} pending
+          </h2>
+        </div>
+        <button
+          onClick={load}
+          data-testid="reviews-refresh"
+          className="inline-flex items-center gap-2 text-xs uppercase tracking-[0.16em] border border-[#121212] px-3 py-2 hover:bg-[#121212] hover:text-[#F3F2ED] transition-colors"
+        >
+          <RefreshCw size={13} /> Refresh
+        </button>
+      </div>
+
+      {/* Invite form */}
+      <div className="mt-6 border border-[#121212] bg-[#F3F2ED] p-6 md:p-8">
+        <div className="overline mb-4 flex items-center gap-2">
+          <Plus size={14} /> Send a review invite
+        </div>
+        <form
+          onSubmit={createInvite}
+          noValidate
+          className="grid grid-cols-1 md:grid-cols-4 gap-4"
+          data-testid="invite-form"
+        >
+          <Input
+            placeholder="Client name"
+            value={inviteForm.client_name}
+            onChange={(e) => setInviteForm({ ...inviteForm, client_name: e.target.value })}
+            data-testid="invite-name"
+          />
+          <Input
+            type="email"
+            placeholder="client@email.com"
+            value={inviteForm.client_email}
+            onChange={(e) => setInviteForm({ ...inviteForm, client_email: e.target.value })}
+            data-testid="invite-email"
+          />
+          <Input
+            placeholder="Project (optional)"
+            value={inviteForm.project}
+            onChange={(e) => setInviteForm({ ...inviteForm, project: e.target.value })}
+            data-testid="invite-project"
+          />
+          <button
+            type="submit"
+            disabled={creating}
+            data-testid="invite-submit"
+            className="inline-flex items-center justify-center gap-2 bg-[#121212] text-[#F3F2ED] px-4 py-2 text-xs uppercase tracking-[0.16em] hover:bg-[#E83B22] transition-colors"
+          >
+            <Link2 size={13} /> {creating ? "Creating…" : "Create link"}
+          </button>
+          <label className="md:col-span-4 flex items-center gap-2 text-xs text-[#595959] font-mono">
+            <input
+              type="checkbox"
+              checked={inviteForm.send_email}
+              onChange={(e) => setInviteForm({ ...inviteForm, send_email: e.target.checked })}
+              data-testid="invite-send-email"
+            />
+            Email the invite automatically (uses your Gmail SMTP)
+          </label>
+        </form>
+      </div>
+
+      {/* Active invite links */}
+      {activeTokens.length > 0 && (
+        <div className="mt-4 border border-[#D5D3CB] bg-[#F3F2ED] p-4" data-testid="active-tokens">
+          <div className="overline mb-3">Active invite links</div>
+          <ul className="space-y-2">
+            {activeTokens.map((t) => (
+              <li key={t.token} className="flex items-center justify-between gap-3 text-sm border-b border-[#EAE9E4] pb-2 last:border-b-0">
+                <div className="min-w-0 flex-1">
+                  <div className="font-display text-lg truncate">{t.client_name}</div>
+                  <div className="text-xs text-[#595959] truncate">{t.url}</div>
+                </div>
+                <button
+                  onClick={() => copyLink(t.url)}
+                  className="inline-flex items-center gap-1 text-xs uppercase tracking-[0.14em] border border-[#121212] px-2 py-1 hover:bg-[#121212] hover:text-[#F3F2ED]"
+                >
+                  <Copy size={12} /> Copy
+                </button>
+                <button
+                  onClick={() => removeToken(t.token)}
+                  className="text-[#595959] hover:text-[#E83B22]"
+                  aria-label="Delete invite"
+                >
+                  <Trash2 size={15} />
+                </button>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      {/* Pending + published lists */}
+      {loading ? (
+        <div className="py-12 text-center font-mono text-sm text-[#595959]">Loading reviews…</div>
+      ) : (
+        <>
+          {pending.length > 0 && (
+            <div className="mt-6" data-testid="pending-reviews">
+              <h3 className="overline mb-3">Pending approval ({pending.length})</h3>
+              <div className="space-y-3">
+                {pending.map((r) => (
+                  <ReviewRow
+                    key={r.id}
+                    r={r}
+                    onApprove={() => setApproval(r.id, true)}
+                    onDelete={() => remove(r.id)}
+                  />
+                ))}
+              </div>
+            </div>
+          )}
+
+          <div className="mt-8" data-testid="published-reviews">
+            <h3 className="overline mb-3">Live on site ({published.length})</h3>
+            {published.length === 0 ? (
+              <div className="text-sm text-[#595959] py-6 border border-dashed border-[#D5D3CB] text-center">
+                No published reviews yet — placeholder testimonials are showing on the live site.
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {published.map((r) => (
+                  <ReviewRow
+                    key={r.id}
+                    r={r}
+                    onUnpublish={() => setApproval(r.id, false)}
+                    onDelete={() => remove(r.id)}
+                  />
+                ))}
+              </div>
+            )}
+          </div>
+        </>
+      )}
+    </section>
+  );
+};
+
+const ReviewRow = ({ r, onApprove, onUnpublish, onDelete }) => (
+  <article className="border border-[#121212] bg-[#F3F2ED] p-5 grid grid-cols-1 md:grid-cols-12 gap-4 items-start">
+    <div className="md:col-span-3 flex items-center gap-3">
+      {r.photo_data_url ? (
+        <img
+          src={r.photo_data_url}
+          alt={r.name}
+          className="w-12 h-12 object-cover border border-[#121212] grayscale flex-shrink-0"
+        />
+      ) : (
+        <div className="w-12 h-12 border border-[#D5D3CB] bg-[#EAE9E4] flex-shrink-0" />
+      )}
+      <div className="min-w-0">
+        <div className="font-display text-xl truncate">{r.name}</div>
+        <div className="text-xs text-[#595959] truncate">
+          {[r.role, r.company].filter(Boolean).join(" · ") || "—"}
+        </div>
+      </div>
+    </div>
+    <div className="md:col-span-1 flex md:flex-col items-center md:items-start gap-1">
+      <div className="flex gap-0.5 text-[#E83B22]">
+        {[...Array(Math.max(1, Math.min(5, r.rating)))].map((_, i) => (
+          <Star key={i} size={12} fill="currentColor" stroke="none" />
+        ))}
+      </div>
+      <span className="md:hidden text-xs text-[#595959] ml-2">{r.rating}/5</span>
+    </div>
+    <p className="md:col-span-6 text-sm whitespace-pre-wrap">"{r.quote}"</p>
+    <div className="md:col-span-2 flex flex-wrap md:flex-col md:items-end gap-2">
+      {onApprove && (
+        <button
+          onClick={onApprove}
+          className="inline-flex items-center gap-1 text-xs uppercase tracking-[0.14em] bg-[#121212] text-[#F3F2ED] px-2 py-1 hover:bg-[#E83B22]"
+        >
+          <Check size={12} /> Publish
+        </button>
+      )}
+      {onUnpublish && (
+        <button
+          onClick={onUnpublish}
+          className="inline-flex items-center gap-1 text-xs uppercase tracking-[0.14em] border border-[#121212] px-2 py-1 hover:bg-[#121212] hover:text-[#F3F2ED]"
+        >
+          <XIcon size={12} /> Unpublish
+        </button>
+      )}
+      <button
+        onClick={onDelete}
+        className="text-[#595959] hover:text-[#E83B22] self-end"
+        aria-label="Delete review"
+      >
+        <Trash2 size={15} />
+      </button>
+    </div>
+  </article>
+);
+
+const BreakdownCard = ({ title, data, testid }) => {  const total = (data || []).reduce((acc, d) => acc + d.value, 0) || 1;
   return (
     <div
       data-testid={testid}
