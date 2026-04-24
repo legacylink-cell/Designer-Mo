@@ -1536,7 +1536,7 @@ const Contact = () => {
 const Footer = () => (
   <footer className="pt-20 pb-8 border-t border-[#D5D3CB]" data-testid="site-footer">
     <div className="max-w-7xl mx-auto px-6 md:px-12">
-      <div className="flex items-start justify-between flex-wrap gap-6">
+      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-10">
         <div>
           <div className="overline">Index / End</div>
           <p className="mt-2 max-w-sm text-[#595959]">
@@ -1544,7 +1544,7 @@ const Footer = () => (
             worldwide.
           </p>
         </div>
-        <div className="flex flex-col items-end gap-3 text-sm">
+        <div className="flex flex-col sm:items-end gap-3 text-sm">
           <a
             href="https://www.linkedin.com/in/mohamed-abou-zeid-681a6732/"
             target="_blank"
@@ -1566,7 +1566,7 @@ const Footer = () => (
         </div>
       </div>
 
-      <div className="mt-6 flex items-center justify-between text-xs font-mono text-[#595959]">
+      <div className="mt-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 text-xs font-mono text-[#595959]">
         <span>© {new Date().getFullYear()} Mohamed Abou Zeid</span>
         <span>Made with care · Cairo ↔ Worldwide</span>
       </div>
