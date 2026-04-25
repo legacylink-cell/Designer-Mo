@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <defs>
+    <style type="text/css">
+      @import url("https://fonts.googleapis.com/css2?family=Gloock&amp;display=swap");
+      .logo-text { font-family: "Gloock", "Playfair Display", Georgia, serif; font-size: 360px; font-weight: 400; letter-spacing: -0.02em; }
+    }
+    </style>
+  </defs>
+  
+  <text x="50%" y="68%" text-anchor="middle" class="logo-text" fill="#121212">Mo<tspan fill="#E83B22">.</tspan></text>
+</svg>
