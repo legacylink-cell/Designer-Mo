@@ -980,7 +980,8 @@ const TestimonialCard = ({ t, testid }) => (
 );
 
 const Testimonials = () => {
-  const [items, setItems] = useState(hardcodedTestimonials);
+  const [items, setItems] = useState([]);
+  const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -989,17 +990,20 @@ const Testimonials = () => {
         const res = await axios.get(`${API}/reviews`);
         if (cancelled) return;
         const approved = Array.isArray(res.data) ? res.data : [];
-        if (approved.length > 0) {
-          setItems(approved.map(normaliseReview));
-        }
+        setItems(approved.map(normaliseReview));
       } catch {
-        // keep hardcoded fallback
+        // ignore — section just stays hidden
+      } finally {
+        if (!cancelled) setLoaded(true);
       }
     })();
     return () => {
       cancelled = true;
     };
   }, []);
+
+  // Hide the section entirely until at least one review is approved
+  if (!loaded || items.length === 0) return null;
 
   return (
     <section className="py-24 md:py-32 border-t border-[#D5D3CB] bg-[#EAE9E4]">
@@ -1021,9 +1025,11 @@ const Testimonials = () => {
             </div>
           ))}
         </div>
-        <p className="md:hidden mt-2 font-mono text-[0.65rem] tracking-[0.22em] text-[#595959] uppercase">
-          ← Swipe →
-        </p>
+        {items.length > 1 && (
+          <p className="md:hidden mt-2 font-mono text-[0.65rem] tracking-[0.22em] text-[#595959] uppercase">
+            ← Swipe →
+          </p>
+        )}
 
         <div className="hidden md:grid grid-cols-3 gap-8 mt-8">
           {items.slice(0, 6).map((t, i) => (
