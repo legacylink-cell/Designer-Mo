@@ -1054,6 +1054,10 @@ const faqs = [
     a: "Absolutely — no lock-in. Give 30 days' written notice, and I export your codebase, hand over DNS + CMS + analytics access, and you can host anywhere. Your final month is billed in full (non-refundable) and covers the handover work. Clean break, no hostage-taking.",
   },
   {
+    q: "What are your payment terms?",
+    a: "Project work is paid 100% upfront once scope is agreed and you've submitted the full brief. Once the project kicks off, payments are non-refundable. Monthly maintenance is billed monthly, in advance, for the upcoming month's service. Invoices and receipts are available on request — just ask.",
+  },
+  {
     q: "Do I keep ownership of the site?",
     a: "100%. The code, design files, and domain are yours. I build host-agnostic — you can move the site anywhere without locking you into a platform.",
   },
