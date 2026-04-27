@@ -556,6 +556,11 @@ const addons = [
     desc: "Up to 10 products, cart + checkout, tax & shipping rules, confirmation emails. Your site, now taking money.",
   },
   {
+    name: "CMS add-on (existing site)",
+    price: "$1,000",
+    desc: "Retrofit a content management system onto a site you already have. Includes schema setup, content migration, and a 30-min training session.",
+  },
+  {
     name: "Monthly maintenance",
     price: "from $150 / mo",
     desc: "Updates, backups, monitoring, edit hours, and a monthly check-in. The safety net that keeps the site alive.",
