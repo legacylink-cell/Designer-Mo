@@ -1629,7 +1629,7 @@ const Footer = () => (
 
       <div className="mt-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 text-xs font-mono text-[#595959]">
         <span>© {new Date().getFullYear()} Mohamed Abou Zeid</span>
-        <span>Made with care · Cairo ↔ Worldwide</span>
+        <span>Made with care · Texas, USA</span>
       </div>
     </div>
   </footer>
