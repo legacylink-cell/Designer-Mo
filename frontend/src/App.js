@@ -5,6 +5,7 @@ import axios from "axios";
 import { Toaster, toast } from "sonner";
 import Admin from "@/Admin";
 import ReviewPage from "@/ReviewPage";
+import Terms from "@/Terms";
 import {
   ArrowUpRight,
   ArrowRight,
@@ -1069,6 +1070,10 @@ const faqs = [
     a: "Project work is paid 100% upfront once scope is agreed and you've submitted the full brief. Once the project kicks off, payments are non-refundable. Monthly maintenance is billed monthly, in advance, for the upcoming month's service. Invoices and receipts are available on request — just ask.",
   },
   {
+    q: "Is there a contract?",
+    a: "Yes — every engagement is governed by my Terms & Conditions (linked in the footer). When you confirm an engagement by email, text, chat, or signed proposal, AND submit payment for the agreed scope, you're automatically accepting those Terms. No separate signature needed. Read them anytime at /terms.",
+  },
+  {
     q: "Do I keep ownership of the site?",
     a: "100%. The code, design files, and domain are yours. I build host-agnostic — you can move the site anywhere without locking you into a platform.",
   },
@@ -1576,7 +1581,12 @@ const Contact = () => {
 
           <div className="md:col-span-2 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pt-4 border-t border-[#595959]">
             <p className="text-xs text-[#D5D3CB] font-mono">
-              By sending, you agree to be contacted about your inquiry. No spam, ever.
+              By sending, you agree to be contacted about your inquiry. Once
+              we agree on scope and you submit payment, you also accept the{" "}
+              <a href="/terms" className="underline hover:text-[#F3F2ED]">
+                Terms &amp; Conditions
+              </a>
+              . No spam, ever.
             </p>
             <button
               type="submit"
@@ -1617,6 +1627,9 @@ const Footer = () => (
           </a>
           <a href="#contact" data-testid="footer-contact" className="link-underline">
             Get in touch →
+          </a>
+          <a href="/terms" data-testid="footer-terms" className="link-underline">
+            Terms &amp; Conditions
           </a>
         </div>
       </div>
@@ -1671,6 +1684,7 @@ function App() {
           <Route path="/" element={<Landing />} />
           <Route path="/admin" element={<Admin />} />
           <Route path="/review/:token" element={<ReviewPage />} />
+          <Route path="/terms" element={<Terms />} />
         </Routes>
       </BrowserRouter>
     </div>
