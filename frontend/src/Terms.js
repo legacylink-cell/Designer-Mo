@@ -68,13 +68,29 @@ const Terms = () => (
       <div className="mt-12 border border-[#121212] bg-[#EAE9E4] p-6 md:p-8">
         <div className="overline mb-2">Acceptance</div>
         <p className="text-base md:text-lg leading-relaxed">
-          By engaging Mo Studio for any service — whether by replying
-          &quot;yes,&quot; &quot;let&apos;s go,&quot; or any equivalent confirmation via
-          <strong> email, text, chat, or signed proposal</strong>; or by
-          submitting <strong>any payment</strong> for an agreed-upon scope —
-          you acknowledge that you have read these Terms &amp; Conditions and
-          agree to be legally bound by them in their entirety. No additional
-          signature is required for these Terms to take effect.
+          By engaging Mo Studio for any service, you acknowledge that you have
+          read these Terms &amp; Conditions and agree to be legally bound by
+          them in their entirety. Acceptance is triggered by <strong>any</strong> of
+          the following:
+        </p>
+        <ul className="mt-4 space-y-2">
+          <Bullet>
+            <strong>Written confirmation</strong> — a &quot;yes,&quot; &quot;let&apos;s go,&quot;
+            or any equivalent acceptance of a proposal or quote sent by email,
+            text, chat, or signed document.
+          </Bullet>
+          <Bullet>
+            <strong>Payment</strong> — submitting any payment, deposit, or
+            invoice settlement for an agreed-upon scope.
+          </Bullet>
+          <Bullet>
+            <strong>Project commencement</strong> — once any work has begun on
+            an engagement, the Client is deemed to have accepted these Terms,
+            even if no separate confirmation or payment has yet been received.
+          </Bullet>
+        </ul>
+        <p className="mt-4 text-base md:text-lg leading-relaxed">
+          No additional signature is required for these Terms to take effect.
         </p>
       </div>
 
