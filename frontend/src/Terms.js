@@ -5,15 +5,15 @@ import { ArrowLeft } from "lucide-react";
 const Section = ({ n, title, children }) => (
   <section className="border-t border-[#D5D3CB] py-10">
     <div className="grid grid-cols-1 md:grid-cols-12 gap-6 md:gap-10">
-      <div className="md:col-span-3">
+      <div className="md:col-span-4">
         <span className="font-mono text-xs tracking-[0.22em] text-[#595959] uppercase">
           §{n}
         </span>
-        <h2 className="font-display text-3xl md:text-4xl tracking-tight leading-tight mt-2">
+        <h2 className="font-display text-2xl md:text-3xl tracking-tight leading-tight mt-2 break-words hyphens-auto">
           {title}
         </h2>
       </div>
-      <div className="md:col-span-9 prose-mo">{children}</div>
+      <div className="md:col-span-8 prose-mo">{children}</div>
     </div>
   </section>
 );
