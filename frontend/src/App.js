@@ -842,6 +842,13 @@ const works = [
     href: "https://www.e-vault-app.com",
     span: "md:col-span-12",
     ratio: "aspect-[16/9]",
+    lede: "A security dashboard that turns technical risk into one clear score.",
+    meta: [
+      { k: "Role", v: "Design + Build" },
+      { k: "Stack", v: "React · Python" },
+      { k: "Year", v: "2025" },
+      { k: "Sector", v: "SaaS / Security" },
+    ],
   },
 ];
 
@@ -866,7 +873,7 @@ const Portfolio = () => (
           const Inner = (
             <>
               <div
-                className={`overflow-hidden ${
+                className={`relative overflow-hidden ${
                   w.fit === "contain" ? "bg-[#F3F2ED] flex items-center justify-center" : ""
                 }`}
               >
@@ -878,6 +885,32 @@ const Portfolio = () => (
                   }`}
                   loading="lazy"
                 />
+                {w.lede && (
+                  <div
+                    aria-hidden="true"
+                    className="pointer-events-none absolute inset-0 flex flex-col justify-end px-6 md:px-10 py-6 md:py-8 text-[#F3F2ED] opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+                    style={{
+                      background:
+                        "linear-gradient(180deg, rgba(18,18,18,0) 35%, rgba(18,18,18,0.86) 100%)",
+                    }}
+                  >
+                    <p className="font-display text-xl md:text-2xl leading-tight max-w-[60%] mb-4 md:mb-5 translate-y-2 group-hover:translate-y-0 transition-transform duration-500">
+                      {w.lede}
+                    </p>
+                    {w.meta && (
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-5 border-t border-[#F3F2ED]/25 pt-3 md:pt-4 translate-y-3 group-hover:translate-y-0 transition-transform duration-500 delay-75">
+                        {w.meta.map((m) => (
+                          <div key={m.k}>
+                            <div className="font-mono text-[10px] tracking-[0.18em] uppercase opacity-70">
+                              {m.k}
+                            </div>
+                            <div className="text-sm mt-1">{m.v}</div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
               <figcaption className="flex items-center justify-between px-4 py-3 border-t border-[#121212] bg-[#F3F2ED]">
                 <div>
