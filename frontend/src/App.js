@@ -838,10 +838,10 @@ const works = [
   {
     t: "E-Vault",
     c: "SaaS · Digital Security",
-    img: "/portfolio/e-vault-flat.jpg",
+    img: "/portfolio/e-vault-device.jpg",
     href: "https://www.e-vault-app.com",
     span: "md:col-span-12",
-    fit: "contain",
+    ratio: "aspect-[16/9]",
   },
 ];
 
@@ -873,7 +873,7 @@ const Portfolio = () => (
                 <img
                   src={w.img}
                   alt={w.t}
-                  className={`w-full h-[420px] md:h-[520px] transition-transform duration-700 group-hover:scale-[1.03] ${
+                  className={`w-full ${w.ratio ? w.ratio : "h-[420px] md:h-[520px]"} transition-transform duration-700 group-hover:scale-[1.03] ${
                     w.fit === "contain" ? "object-contain p-6" : "object-cover"
                   }`}
                   loading="lazy"
