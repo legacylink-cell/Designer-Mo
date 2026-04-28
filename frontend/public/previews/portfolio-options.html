@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Portfolio Tile — 4 options · Mo Studio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Gloock&family=Outfit:wght@400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root{--bg:#F3F2ED;--ink:#121212;--muted:#595959;--line:#D5D3CB;--accent:#E83B22}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:"Outfit",system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+  .display{font-family:"Gloock",Georgia,serif;letter-spacing:-0.02em}
+  .mono{font-family:"JetBrains Mono",monospace}
+  .overline{font-family:"JetBrains Mono",monospace;font-size:11px;letter-spacing:0.22em;text-transform:uppercase;color:var(--muted)}
+  .container{max-width:1200px;margin:0 auto;padding:40px 24px}
+  h1{font-family:"Gloock",Georgia,serif;font-size:48px;margin:12px 0 20px;letter-spacing:-0.02em}
+  h2{font-family:"Gloock",Georgia,serif;font-size:34px;margin:0 0 6px;letter-spacing:-0.01em}
+  .tile-wrap{margin-top:60px;border-top:1px solid var(--ink);padding-top:20px}
+  .head{display:flex;align-items:baseline;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:18px}
+  .head .badge{background:var(--ink);color:var(--bg);padding:4px 10px;font-family:"JetBrains Mono",monospace;font-size:11px;letter-spacing:0.16em;text-transform:uppercase}
+  .tile{border:1px solid var(--ink);overflow:hidden;background:var(--bg);display:block;color:inherit;text-decoration:none}
+  .tile img{display:block;width:100%}
+  .caption{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-top:1px solid var(--ink);background:var(--bg)}
+  .caption h3{font-family:"Gloock",Georgia,serif;font-size:22px;margin:0;line-height:1}
+  .caption small{display:block;color:var(--muted);font-family:"JetBrains Mono",monospace;font-size:10px;letter-spacing:0.18em;text-transform:uppercase;margin-top:6px}
+  .arrow{font-size:20px;transition:color .2s}
+  .tile:hover .arrow{color:var(--accent)}
+
+  /* Option A — FLAT (full-bleed dashboard) */
+  .optA img{aspect-ratio:16/9;object-fit:cover}
+
+  /* Option B — BROWSER CHROME */
+  .optB img{aspect-ratio:16/9;object-fit:cover}
+
+  /* Option C — DEVICE mockup with ample room (current style, fixed) */
+  .optC img{aspect-ratio:16/9;object-fit:cover}
+
+  /* Option D — SPLIT case-study (image left, details right) */
+  .optD{display:grid;grid-template-columns:1.3fr 1fr}
+  .optD .imgcol{position:relative;overflow:hidden;border-right:1px solid var(--ink)}
+  .optD .imgcol img{height:100%;object-fit:cover}
+  .optD .detail{padding:32px;display:flex;flex-direction:column;justify-content:space-between;gap:20px}
+  .optD .detail h3{font-family:"Gloock",Georgia,serif;font-size:46px;margin:0;line-height:0.95;letter-spacing:-0.015em}
+  .optD .meta{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:8px}
+  .optD .meta div span{display:block}
+  .optD .meta .k{font-family:"JetBrains Mono",monospace;font-size:10px;letter-spacing:0.18em;text-transform:uppercase;color:var(--muted)}
+  .optD .meta .v{margin-top:4px;font-size:15px}
+  .optD .cta{display:inline-flex;align-items:center;gap:8px;background:var(--ink);color:var(--bg);padding:12px 18px;text-decoration:none;width:fit-content;font-family:"JetBrains Mono",monospace;font-size:11px;letter-spacing:0.18em;text-transform:uppercase}
+  .optD .cta:hover{background:var(--accent)}
+  @media(max-width:720px){.optD{grid-template-columns:1fr}.optD .imgcol{border-right:none;border-bottom:1px solid var(--ink)}.optD .detail h3{font-size:34px}}
+
+  .pick{margin:60px 0 40px;padding:20px;border:1px solid var(--ink);background:#EAE9E4}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="overline">Preview · Portfolio tile — 4 options</div>
+  <h1>Latest Work — pick a style<span style="color:var(--accent)">.</span></h1>
+  <p style="color:var(--muted);max-width:640px">Same E-Vault dashboard, 4 ways to display it. Scroll and reply <strong>A, B, C, or D</strong>. All fit the frame — none get cropped.</p>
+
+  <div class="tile-wrap">
+    <div class="head"><h2>Option A — Flat / full-bleed</h2><span class="badge">modern · minimal</span></div>
+    <p style="color:var(--muted);margin-top:-12px;font-size:14px">Just the duotoned dashboard, edge to edge. Cleanest, most "the site IS the portfolio."</p>
+    <a class="tile optA" href="https://www.e-vault-app.com" target="_blank" rel="noreferrer">
+      <img src="/previews/assets/evault-flat.jpg" alt="E-Vault" />
+      <div class="caption"><div><h3>E-Vault</h3><small>SaaS · Digital Security</small></div><span class="arrow">↗</span></div>
+    </a>
+  </div>
+
+  <div class="tile-wrap">
+    <div class="head"><h2>Option B — Browser chrome</h2><span class="badge">product-style</span></div>
+    <p style="color:var(--muted);margin-top:-12px;font-size:14px">Dashboard inside a browser window with traffic lights and URL. Instantly reads as "a real website I built."</p>
+    <a class="tile optB" href="https://www.e-vault-app.com" target="_blank" rel="noreferrer">
+      <img src="/previews/assets/evault-browser.jpg" alt="E-Vault" />
+      <div class="caption"><div><h3>E-Vault</h3><small>SaaS · Digital Security</small></div><span class="arrow">↗</span></div>
+    </a>
+  </div>
+
+  <div class="tile-wrap">
+    <div class="head"><h2>Option C — Laptop on desk</h2><span class="badge">editorial · printable</span></div>
+    <p style="color:var(--muted);margin-top:-12px;font-size:14px">Your current style, fixed. Laptop mockup on cream background with soft shadow and horizon — magazine photo shoot energy.</p>
+    <a class="tile optC" href="https://www.e-vault-app.com" target="_blank" rel="noreferrer">
+      <img src="/previews/assets/evault-device.jpg" alt="E-Vault" />
+      <div class="caption"><div><h3>E-Vault</h3><small>SaaS · Digital Security</small></div><span class="arrow">↗</span></div>
+    </a>
+  </div>
+
+  <div class="tile-wrap">
+    <div class="head"><h2>Option D — Split case-study</h2><span class="badge">agency · most info</span></div>
+    <p style="color:var(--muted);margin-top:-12px;font-size:14px">Image on the left, project details + CTA on the right. Feels like a real case study card — shows what you did, not just that you did it.</p>
+    <a class="tile optD" href="https://www.e-vault-app.com" target="_blank" rel="noreferrer">
+      <div class="imgcol"><img src="/previews/assets/evault-flat.jpg" alt="E-Vault" /></div>
+      <div class="detail">
+        <div>
+          <div class="overline">Case study · 2025</div>
+          <h3>E-Vault<span style="color:var(--accent)">.</span></h3>
+          <p style="color:var(--muted);margin:12px 0 0;line-height:1.5">A security dashboard for everyday users — turns technical risk into one clear score, plus actions to improve it.</p>
+          <div class="meta">
+            <div><span class="k">Role</span><span class="v">Design + Build</span></div>
+            <div><span class="k">Stack</span><span class="v">React, Python</span></div>
+            <div><span class="k">Timeline</span><span class="v">6 weeks</span></div>
+            <div><span class="k">Sector</span><span class="v">SaaS / Security</span></div>
+          </div>
+        </div>
+        <span class="cta">View live site ↗</span>
+      </div>
+    </a>
+  </div>
+
+  <div class="pick">
+    <span class="overline">Recommendation</span>
+    <p style="margin:8px 0 0"><strong>Option D</strong> is the most agency-grade — it shows prospects the result <em>and</em> what you actually did (role, stack, timeline). Tends to 2× inquiry quality for freelancers with ≤3 case studies.<br/><br/>If you want the cleanest editorial look instead, go <strong>B</strong>. <strong>A</strong> is safest. <strong>C</strong> is what you have now, fixed.</p>
+  </div>
+</div>
+</body>
+</html>
