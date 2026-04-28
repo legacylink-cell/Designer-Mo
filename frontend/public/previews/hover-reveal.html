@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Hover reveal preview · Mo Studio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Gloock&family=Outfit:wght@400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root{--bg:#F3F2ED;--ink:#121212;--muted:#595959;--line:#D5D3CB;--accent:#E83B22}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:"Outfit",system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+  .container{max-width:1200px;margin:0 auto;padding:48px 24px 80px}
+  .overline{font-family:"JetBrains Mono",monospace;font-size:11px;letter-spacing:0.22em;text-transform:uppercase;color:var(--muted)}
+  h1{font-family:"Gloock",Georgia,serif;font-size:48px;margin:12px 0 18px;letter-spacing:-0.02em}
+  h2{font-family:"Gloock",Georgia,serif;font-size:28px;margin:48px 0 6px;letter-spacing:-0.01em}
+  p.lead{color:var(--muted);max-width:680px;line-height:1.5}
+  .tile{position:relative;display:block;color:inherit;text-decoration:none;border:1px solid var(--ink);overflow:hidden;background:var(--bg)}
+  .tile .imgwrap{position:relative;overflow:hidden}
+  .tile img{display:block;width:100%;aspect-ratio:16/9;object-fit:cover;transition:transform .7s ease}
+  .tile:hover img{transform:scale(1.03)}
+
+  /* Caption row (always visible) */
+  .caption{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-top:1px solid var(--ink);background:var(--bg)}
+  .caption h3{font-family:"Gloock",Georgia,serif;font-size:22px;margin:0;line-height:1}
+  .caption small{display:block;color:var(--muted);font-family:"JetBrains Mono",monospace;font-size:10px;letter-spacing:0.18em;text-transform:uppercase;margin-top:6px}
+  .arrow{font-size:20px;transition:color .25s}
+  .tile:hover .arrow{color:var(--accent)}
+
+  /* OVERLAY (the hover reveal) */
+  .overlay{
+    position:absolute;inset:0;
+    background:linear-gradient(180deg,rgba(18,18,18,0) 35%,rgba(18,18,18,0.86) 100%);
+    opacity:0;transition:opacity .45s ease;
+    display:flex;flex-direction:column;justify-content:flex-end;
+    padding:28px 32px;color:#F3F2ED;
+    pointer-events:none;
+  }
+  .tile:hover .overlay{opacity:1}
+
+  .meta{
+    display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:18px;
+    border-top:1px solid rgba(243,242,237,0.25);padding-top:14px;
+    transform:translateY(12px);transition:transform .45s ease .05s;
+  }
+  .tile:hover .meta{transform:translateY(0)}
+  .meta .k{font-family:"JetBrains Mono",monospace;font-size:10px;letter-spacing:0.18em;text-transform:uppercase;opacity:0.7}
+  .meta .v{font-family:"Outfit",sans-serif;font-size:14px;margin-top:4px;letter-spacing:0.01em}
+
+  .blurb{
+    font-family:"Gloock",Georgia,serif;font-size:24px;line-height:1.2;letter-spacing:-0.01em;
+    max-width:60%;margin:0 0 18px;
+    transform:translateY(8px);transition:transform .45s ease;
+  }
+  .tile:hover .blurb{transform:translateY(0)}
+  .blurb em{font-style:italic;color:#fff}
+
+  /* Hint (shown on first paint, fades after) */
+  .hint{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--ink);padding:8px 14px;font-family:"JetBrains Mono",monospace;font-size:11px;letter-spacing:0.18em;text-transform:uppercase;color:var(--muted);margin-top:18px}
+  .dot{width:8px;height:8px;border-radius:50%;background:var(--accent);display:inline-block}
+
+  .row{display:grid;grid-template-columns:1fr;gap:48px;margin-top:24px}
+  @media(min-width:900px){.row.two{grid-template-columns:1fr 1fr}}
+
+  .label{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+  .label .pill{background:var(--ink);color:var(--bg);padding:4px 10px;font-family:"JetBrains Mono",monospace;font-size:10px;letter-spacing:0.16em;text-transform:uppercase}
+
+  .footer-note{margin-top:64px;padding:22px;border:1px solid var(--ink);background:#EAE9E4}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="overline">Preview · Hover reveal — case-study feel</div>
+  <h1>Hover the tile<span style="color:var(--accent)">.</span></h1>
+  <p class="lead">Same clean editorial tile at rest. On hover, a soft dark gradient fades in over the lower half of the image, surfacing a one-line case-study lede plus role · stack · timeline · sector. Nothing competes with the dashboard until a visitor actually leans in.</p>
+  <div class="hint"><span class="dot"></span>Tip — hover the laptop image below</div>
+
+  <h2>At rest → on hover</h2>
+  <p class="lead" style="margin-top:0">Move your cursor over the image. On touch devices, tap once.</p>
+
+  <a class="tile" href="https://www.e-vault-app.com" target="_blank" rel="noreferrer" style="margin-top:18px">
+    <div class="imgwrap">
+      <img src="/previews/assets/evault-device.jpg" alt="E-Vault" />
+      <div class="overlay">
+        <p class="blurb">A security dashboard that turns technical risk into <em>one clear score</em>.</p>
+        <div class="meta">
+          <div><div class="k">Role</div><div class="v">Design + Build</div></div>
+          <div><div class="k">Stack</div><div class="v">React · Python</div></div>
+          <div><div class="k">Year</div><div class="v">2025</div></div>
+          <div><div class="k">Sector</div><div class="v">SaaS / Security</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="caption">
+      <div><h3>E-Vault</h3><small>SaaS · Digital Security</small></div>
+      <span class="arrow">↗</span>
+    </div>
+  </a>
+
+  <h2>Two more variants — pick the energy you want</h2>
+  <p class="lead" style="margin-top:0">Same data, slightly different visual personality. Reply <strong>1, 2, or 3</strong> (or "skip" to leave the tile as-is).</p>
+
+  <div class="row two">
+    <!-- Variant 2: minimal — just chips, no blurb -->
+    <div>
+      <div class="label"><span class="pill">Variant 2</span><span class="overline">Minimal — chips only</span></div>
+      <a class="tile" href="https://www.e-vault-app.com" target="_blank" rel="noreferrer">
+        <div class="imgwrap">
+          <img src="/previews/assets/evault-device.jpg" alt="E-Vault" />
+          <div class="overlay" style="background:linear-gradient(180deg,rgba(18,18,18,0) 50%,rgba(18,18,18,0.78) 100%);padding:22px">
+            <div class="meta" style="grid-template-columns:repeat(4,minmax(0,1fr));border-top:none;padding-top:0">
+              <div style="border:1px solid rgba(243,242,237,0.35);padding:8px 12px"><div class="k">Role</div><div class="v" style="font-size:13px">Design + Build</div></div>
+              <div style="border:1px solid rgba(243,242,237,0.35);padding:8px 12px"><div class="k">Stack</div><div class="v" style="font-size:13px">React · Python</div></div>
+              <div style="border:1px solid rgba(243,242,237,0.35);padding:8px 12px"><div class="k">Year</div><div class="v" style="font-size:13px">2025</div></div>
+              <div style="border:1px solid rgba(243,242,237,0.35);padding:8px 12px"><div class="k">Sector</div><div class="v" style="font-size:13px">SaaS</div></div>
+            </div>
+          </div>
+        </div>
+        <div class="caption"><div><h3>E-Vault</h3><small>SaaS · Digital Security</small></div><span class="arrow">↗</span></div>
+      </a>
+    </div>
+
+    <!-- Variant 3: bold — full dark fill + serif lede -->
+    <div>
+      <div class="label"><span class="pill">Variant 3</span><span class="overline">Bold — full takeover</span></div>
+      <a class="tile" href="https://www.e-vault-app.com" target="_blank" rel="noreferrer">
+        <div class="imgwrap">
+          <img src="/previews/assets/evault-device.jpg" alt="E-Vault" />
+          <div class="overlay" style="background:rgba(18,18,18,0.88);justify-content:center;padding:36px 40px">
+            <div class="overline" style="color:#F3F2ED;opacity:0.7;margin-bottom:10px">Case study · 2025</div>
+            <p class="blurb" style="font-size:30px;max-width:80%">A security dashboard that turns technical risk into <em>one clear score</em>.</p>
+            <div class="meta" style="border-top:1px solid rgba(243,242,237,0.25);padding-top:14px;margin-top:6px">
+              <div><div class="k">Role</div><div class="v">Design + Build</div></div>
+              <div><div class="k">Stack</div><div class="v">React · Python</div></div>
+              <div><div class="k">Timeline</div><div class="v">6 weeks</div></div>
+              <div><div class="k">Sector</div><div class="v">SaaS / Security</div></div>
+            </div>
+          </div>
+        </div>
+        <div class="caption"><div><h3>E-Vault</h3><small>SaaS · Digital Security</small></div><span class="arrow">↗</span></div>
+      </a>
+    </div>
+  </div>
+
+  <div class="footer-note">
+    <span class="overline">Recommendation</span>
+    <p style="margin:8px 0 0">My pick: <strong>Variant 1</strong> (the top one) — it surfaces a real lede sentence + the four meta chips without burying the dashboard. Reads as "case study" without becoming one. <br/><br/>If you want the most agency-grade impression at the cost of fully covering the image on hover, go <strong>Variant 3</strong>. <strong>Variant 2</strong> is the most restrained — keeps the dashboard visible and just adds context.</p>
+  </div>
+</div>
+</body>
+</html>
