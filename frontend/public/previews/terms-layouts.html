@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Terms Layout Options · Mo Studio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Gloock&family=Outfit:wght@400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --bg:#F3F2ED; --bg2:#EAE9E4; --ink:#121212; --muted:#595959;
+    --line:#D5D3CB; --accent:#E83B22;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:"Outfit",system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+  .display{font-family:"Gloock",Georgia,serif;letter-spacing:-0.02em}
+  .mono{font-family:"JetBrains Mono",monospace}
+  .overline{font-family:"JetBrains Mono",monospace;font-size:11px;letter-spacing:0.22em;text-transform:uppercase;color:var(--muted)}
+  .container{max-width:960px;margin:0 auto;padding:40px 24px}
+  .hero{padding:40px 0 24px;border-bottom:1px solid var(--line)}
+  .hero h1{font-family:"Gloock",Georgia,serif;font-size:44px;margin:10px 0 0}
+  .swatch{display:flex;flex-direction:column;gap:0;margin-top:40px;border-top:1px solid var(--ink)}
+  .swatch .label{padding:18px 0 10px;border-bottom:1px solid var(--line);display:flex;align-items:baseline;justify-content:space-between}
+  .swatch .label h2{font-family:"Gloock",Georgia,serif;font-size:30px;margin:0;letter-spacing:-0.015em}
+  .swatch .label .badge{background:var(--ink);color:var(--bg);padding:4px 10px;font-family:"JetBrains Mono",monospace;font-size:11px;letter-spacing:0.16em;text-transform:uppercase}
+  .swatch .stage{background:var(--bg2);padding:48px 32px;border:1px solid var(--line);border-top:none}
+  p{line-height:1.6;color:#1A1A1A}
+  .note{color:var(--muted);font-size:13px;margin-top:10px}
+
+  /* ===== Option A — Stacked ===== */
+  .optA .sec{border-top:1px solid var(--line);padding:32px 0}
+  .optA .sec-head{display:flex;gap:20px;align-items:baseline;margin-bottom:18px}
+  .optA .sec-head .tag{color:var(--muted);font-family:"JetBrains Mono",monospace;font-size:12px;letter-spacing:0.22em;text-transform:uppercase}
+  .optA .sec-head h3{font-family:"Gloock",Georgia,serif;font-size:36px;margin:0;letter-spacing:-0.01em;line-height:1.05}
+  .optA .body{max-width:640px}
+
+  /* ===== Option B — Numbered inline compact ===== */
+  .optB .sec{border-top:1px solid var(--line);padding:28px 0}
+  .optB h3{font-family:"Gloock",Georgia,serif;font-size:22px;margin:0 0 12px;letter-spacing:-0.005em}
+  .optB h3 .tag{color:var(--accent);font-family:"JetBrains Mono",monospace;font-size:12px;letter-spacing:0.18em;text-transform:uppercase;margin-right:10px;vertical-align:0.25em}
+  .optB .body{max-width:720px;font-size:15.5px}
+
+  /* ===== Option C — Editorial side-by-side with clamp ===== */
+  .optC .sec{border-top:1px solid var(--line);padding:36px 0}
+  .optC .grid{display:grid;grid-template-columns:1fr 2fr;gap:40px}
+  .optC .tag{color:var(--muted);font-family:"JetBrains Mono",monospace;font-size:11px;letter-spacing:0.22em;text-transform:uppercase}
+  .optC h3{font-family:"Gloock",Georgia,serif;margin:6px 0 0;line-height:1;letter-spacing:-0.015em;
+           font-size:clamp(26px,4.2vw,42px);overflow-wrap:break-word;hyphens:auto}
+  .optC .body p{margin-top:0}
+  @media (max-width:720px){
+    .optC .grid{grid-template-columns:1fr}
+    .optA .sec-head{flex-wrap:wrap}
+  }
+</style>
+</head>
+<body>
+  <div class="container">
+    <div class="hero">
+      <div class="overline">Preview · 3 layout options</div>
+      <h1>Terms page — pick a style<span style="color:var(--accent)">.</span></h1>
+      <p class="note mono">Same content rendered three ways. Scroll through and tell me A, B, or C.</p>
+    </div>
+
+    <!-- A -->
+    <div class="swatch">
+      <div class="label">
+        <h2>Option A — Stacked</h2>
+        <span class="badge">classic · phone-friendly</span>
+      </div>
+      <div class="stage optA">
+        <div class="sec">
+          <div class="sec-head">
+            <span class="tag">§10</span>
+            <h3>Indemnification</h3>
+          </div>
+          <div class="body">
+            <p>The Client agrees to indemnify and hold harmless the Studio from any third-party claims arising from (a) content the Client supplied or directed the Studio to use, (b) the Client's use of the final deliverables in violation of any law or third-party right, or (c) the Client's breach of these Terms.</p>
+          </div>
+        </div>
+        <div class="sec">
+          <div class="sec-head">
+            <span class="tag">§14</span>
+            <h3>Governing law &amp; disputes</h3>
+          </div>
+          <div class="body">
+            <p>These Terms are governed by the laws of the State of Texas, United States, without regard to its conflict-of-laws rules. The parties agree that any dispute shall first be submitted to good-faith negotiation for at least 30 days.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- B -->
+    <div class="swatch">
+      <div class="label">
+        <h2>Option B — Inline compact</h2>
+        <span class="badge">traditional · dense</span>
+      </div>
+      <div class="stage optB">
+        <div class="sec">
+          <h3><span class="tag">§10</span>Indemnification</h3>
+          <div class="body">
+            <p>The Client agrees to indemnify and hold harmless the Studio from any third-party claims arising from (a) content the Client supplied or directed the Studio to use, (b) the Client's use of the final deliverables in violation of any law or third-party right, or (c) the Client's breach of these Terms.</p>
+          </div>
+        </div>
+        <div class="sec">
+          <h3><span class="tag">§14</span>Governing law &amp; disputes</h3>
+          <div class="body">
+            <p>These Terms are governed by the laws of the State of Texas, United States, without regard to its conflict-of-laws rules. The parties agree that any dispute shall first be submitted to good-faith negotiation for at least 30 days.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- C -->
+    <div class="swatch">
+      <div class="label">
+        <h2>Option C — Editorial (current, auto-shrink)</h2>
+        <span class="badge">magazine · your current vibe</span>
+      </div>
+      <div class="stage optC">
+        <div class="sec">
+          <div class="grid">
+            <div>
+              <span class="tag">§10</span>
+              <h3>Indemnification</h3>
+            </div>
+            <div class="body">
+              <p>The Client agrees to indemnify and hold harmless the Studio from any third-party claims arising from (a) content the Client supplied or directed the Studio to use, (b) the Client's use of the final deliverables in violation of any law or third-party right, or (c) the Client's breach of these Terms.</p>
+            </div>
+          </div>
+        </div>
+        <div class="sec">
+          <div class="grid">
+            <div>
+              <span class="tag">§14</span>
+              <h3>Governing law &amp; disputes</h3>
+            </div>
+            <div class="body">
+              <p>These Terms are governed by the laws of the State of Texas, United States, without regard to its conflict-of-laws rules. The parties agree that any dispute shall first be submitted to good-faith negotiation for at least 30 days.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin:60px 0 40px;padding:20px;border:1px solid var(--ink);background:var(--bg2)">
+      <span class="overline">Recommendation</span>
+      <p style="margin:8px 0 0">I'd go with <strong>Option A</strong> — cleanest on phones, never overflows, and scales to any future section title length. But all three are production-quality. Pick whichever feels right.</p>
+    </div>
+  </div>
+</body>
+</html>
