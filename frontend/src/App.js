@@ -838,9 +838,10 @@ const works = [
   {
     t: "E-Vault",
     c: "SaaS · Digital Security",
-    img: "/portfolio/e-vault.jpg",
+    img: "/portfolio/e-vault-flat.jpg",
     href: "https://www.e-vault-app.com",
     span: "md:col-span-12",
+    fit: "contain",
   },
 ];
 
